@@ -6,7 +6,6 @@ import (
 	"encoding/csv"
 	"os"
 	"strconv"
-	"unicode/utf8"
 
 	"github.com/topher200/baseutil"
 )
@@ -30,7 +29,8 @@ func ParsePlayers(inputFilename string) []Player {
 	for i, player := range playersCsvLines {
 		value, err := strconv.ParseFloat(player[1], 32)
 		baseutil.Check(err)
-		gender, _ := utf8.DecodeRuneInString(player[2])
+		gender, err := StringToGender(player[2])
+		baseutil.Check(err)
 		players[i] = Player{player[0], float32(value), gender, 0}
 	}
 	return players
