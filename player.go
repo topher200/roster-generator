@@ -12,6 +12,9 @@ const (
 	Default
 )
 
+// Parses single character string into Gender
+//
+// The string must be either "m" or "f", or we return error.
 func StringToGender(s string) (Gender, error) {
 	switch s {
 	case "m":
