@@ -12,7 +12,7 @@ const (
 	Default
 )
 
-// Parses single character string into Gender
+// StringToGender parses single character string into a Gender.
 //
 // The string must be either "m" or "f", or we return error.
 func StringToGender(s string) (Gender, error) {
