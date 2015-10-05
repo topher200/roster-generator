@@ -51,7 +51,13 @@ func main() {
 	// Read command line input
 	filenamePointer := flag.String(
 		"input-file", "input-test.txt", "filename to read input")
+	deterministicPointer := flag.Bool("deterministic", false,
+		"makes our output deterministic by allowing the default rand.Seed")
 	flag.Parse()
+
+	if *deterministicPointer {
+		rand.Seed(time.Now().UTC().UnixNano())
+	}
 
 	players := ParsePlayers(*filenamePointer)
 	solution := Solution{players}
