@@ -3,10 +3,11 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"math/rand"
 	"time"
+
+	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/GaryBoone/GoStats/stats"
 )
@@ -49,13 +50,15 @@ func score(solution Solution) float64 {
 
 func main() {
 	// Read command line input
-	filenamePointer := flag.String(
-		"input-file", "input-test.txt", "filename to read input")
-	deterministicPointer := flag.Bool("deterministic", false,
-		"makes our output deterministic by allowing the default rand.Seed")
-	flag.Parse()
+	filenamePointer := kingpin.Arg("input-file",
+		"filename from which to get list of players").
+		Required().String()
+	deterministicPointer := kingpin.Flag("deterministic",
+		"makes our output deterministic by allowing the default rand.Seed").
+		Short('d').Bool()
+	kingpin.Parse()
 
-	if *deterministicPointer {
+	if !*deterministicPointer {
 		rand.Seed(time.Now().UTC().UnixNano())
 	}
 
