@@ -4,7 +4,7 @@ package main
 
 import "fmt"
 
-type Gender int
+type Gender uint8
 
 const (
 	Male Gender = iota
