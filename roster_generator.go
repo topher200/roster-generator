@@ -5,7 +5,10 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math"
+	"math/rand"
+	"time"
+
+	"github.com/GaryBoone/GoStats/stats"
 )
 
 const numTeams = 6
@@ -27,24 +30,21 @@ func splitIntoTeams(players []Player) [][]Player {
 }
 
 // Score a solution based on weighted critera.
-func score(solution Solution) int {
+func score(solution Solution) float64 {
 	// Balanced by number
 	teams := splitIntoTeams(solution.players)
 
-	// We sum the amount of difference (in number of players on the team) between
-	// every team and every other team.
-	//
-	// This is currently incredibly inefficient (O(n^2) (but n is 6!))
-	playerDifference := 0
-	for _, team := range teams {
-		for _, otherTeam := range teams {
-			playerDifference += int(math.Abs(float64(len(team) - len(otherTeam))))
-		}
+	teamLengths := make([]float64, numTeams)
+	for i, team := range teams {
+		teamLengths[i] = float64(len(team))
 	}
+	fmt.Println("teamLengths", teamLengths)
+	teamsStdDev := stats.StatsSampleStandardDeviation(teamLengths)
+	fmt.Println("teamsStdDev", teamsStdDev)
 
-	// Balanced by gender
+	// TODO Balanced by gender
 
-	return playerDifference
+	return teamsStdDev
 }
 
 func main() {
@@ -56,5 +56,5 @@ func main() {
 	players := ParsePlayers(*filenamePointer)
 	solution := Solution{players}
 
-	fmt.Println(score(solution))
+	fmt.Println("score:", score(solution))
 }
