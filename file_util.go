@@ -4,6 +4,7 @@ package main
 
 import (
 	"encoding/csv"
+	"math/rand"
 	"os"
 	"strconv"
 
@@ -31,7 +32,8 @@ func ParsePlayers(inputFilename string) []Player {
 		baseutil.Check(err)
 		gender, err := StringToGender(player[2])
 		baseutil.Check(err)
-		players[i] = Player{player[0], float32(value), gender, 0}
+		team := uint8(rand.Intn(numTeams))
+		players[i] = Player{player[0], float32(value), gender, team}
 	}
 	return players
 }
