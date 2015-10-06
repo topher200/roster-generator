@@ -10,6 +10,7 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 
 	"github.com/GaryBoone/GoStats/stats"
+	"github.com/topher200/baseutil"
 )
 
 const numTeams = 6
@@ -32,9 +33,9 @@ func splitIntoTeams(players []Player) []Team {
 
 // Score a solution based on weighted critera.
 func score(solution Solution) float64 {
-	// Balanced by number
 	teams := splitIntoTeams(solution.players)
 
+	// Balanced by number
 	teamLengths := make([]float64, numTeams)
 	for i, team := range teams {
 		teamLengths[i] = float64(len(team.players))
@@ -43,7 +44,25 @@ func score(solution Solution) float64 {
 	teamsStdDev := stats.StatsSampleStandardDeviation(teamLengths)
 	fmt.Println("teamsStdDev", teamsStdDev)
 
-	// TODO Balanced by gender
+	// Score on balance in gender.
+	//
+	// For each Gender we make a list of the number of players of that gender on
+	// each team. Then we take the standard deviation of those two lists to
+	// determine the gender imbalance.
+	teamGenders := make(map[Gender][]int)
+	for _, gender := range []Gender{Male, Female} {
+		teamGenders[gender] = make([]int, 6)
+	}
+	for teamNum, team := range teams {
+		for _, player := range team.players {
+			teamGenders[player.gender][teamNum] += 1
+		}
+	}
+	fmt.Println("teamGenders", teamGenders)
+	for gender, teamList := range teamGenders {
+		teamsStdDev = baseutil.StandardDeviationInt(teamList)
+		fmt.Println("gender", gender, "std dev:", teamsStdDev)
+	}
 
 	return teamsStdDev
 }
