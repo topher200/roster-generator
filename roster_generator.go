@@ -22,10 +22,10 @@ type Team struct {
 	players []Player
 }
 
-func splitIntoTeams(players []Player) [][]Player {
-	teams := make([][]Player, numTeams)
+func splitIntoTeams(players []Player) []Team {
+	teams := make([]Team, numTeams)
 	for _, player := range players {
-		teams[player.team] = append(teams[player.team], player)
+		teams[player.team].players = append(teams[player.team].players, player)
 	}
 	return teams
 }
@@ -37,7 +37,7 @@ func score(solution Solution) float64 {
 
 	teamLengths := make([]float64, numTeams)
 	for i, team := range teams {
-		teamLengths[i] = float64(len(team))
+		teamLengths[i] = float64(len(team.players))
 	}
 	fmt.Println("teamLengths", teamLengths)
 	teamsStdDev := stats.StatsSampleStandardDeviation(teamLengths)

@@ -16,7 +16,7 @@ func TestSplitIntoTeams(t *testing.T) {
 	teams := splitIntoTeams(players)
 
 	assert.Equal(t, 6, len(teams))
-	assert.Equal(t, 0, len(teams[0]))
-	assert.Equal(t, 1, len(teams[1]))
-	assert.Equal(t, 1, len(teams[2]))
+	assert.Equal(t, 0, len(teams[0].players))
+	assert.Equal(t, 1, len(teams[1].players))
+	assert.Equal(t, 1, len(teams[2].players))
 }
