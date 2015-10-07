@@ -73,6 +73,12 @@ func score(solution Solution) float64 {
 	return totalScore
 }
 
+func randomizeTeams(solution *Solution) {
+	for i, _ := range solution.players {
+		solution.players[i].team = uint8(rand.Intn(numTeams))
+	}
+}
+
 func main() {
 	// Read command line input
 	filenamePointer := kingpin.Arg("input-file",
@@ -89,6 +95,7 @@ func main() {
 
 	players := ParsePlayers(*filenamePointer)
 	solution := Solution{players}
+	randomizeTeams(&solution)
 
 	fmt.Println("score:", score(solution))
 }
