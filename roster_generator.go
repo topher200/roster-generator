@@ -9,7 +9,6 @@ import (
 
 	"gopkg.in/alecthomas/kingpin.v2"
 
-	"github.com/GaryBoone/GoStats/stats"
 	"github.com/topher200/baseutil"
 )
 
@@ -36,12 +35,12 @@ func score(solution Solution) float64 {
 	teams := splitIntoTeams(solution.players)
 
 	// Balanced by number
-	teamLengths := make([]float64, numTeams)
+	teamLengths := make([]int, numTeams)
 	for i, team := range teams {
-		teamLengths[i] = float64(len(team.players))
+		teamLengths[i] = len(team.players)
 	}
 	fmt.Println("teamLengths", teamLengths)
-	teamsStdDev := stats.StatsSampleStandardDeviation(teamLengths)
+	teamsStdDev := baseutil.StandardDeviationInt(teamLengths)
 	fmt.Println("teamsStdDev", teamsStdDev)
 
 	// Score on balance in gender.
