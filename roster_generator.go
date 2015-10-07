@@ -3,7 +3,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"math/rand"
 	"sort"
 	"time"
@@ -17,7 +17,7 @@ import (
 const numTeams = 6
 
 // Number of times to run our genetic algorithm
-const numRuns = 10
+const numRuns = 100000
 
 // Percent of the time we will try to mutate. After each mutation, we have a
 // mutationChance percent chance of mutating again.
@@ -99,28 +99,34 @@ func randomizeTeams(players []Player) {
 }
 
 // Mutate the solution by moving random players to random teams, sometimes.
-func mutate(solution Solution) {
+func mutate(players []Player) {
 	for {
 		// We have mutationChance of mutating. Otherwise, we break out of our loop
 		if rand.Intn(100) > mutationChance {
 			return
 		}
 		// Mutation! Move a random player to a random new team
-		solution.players[rand.Intn(len(solution.players))].team =
-			uint8(rand.Intn(numTeams))
+		players[rand.Intn(len(players))].team = uint8(rand.Intn(numTeams))
 	}
 }
 
 // Breed via combining the two given solutions, then randomly mutating.
-func breed(solution1 Solution, solution2 Solution) (newSolution Solution) {
-	// TODO combine
-	newSolution = solution1
+func breed(solution1 Solution, solution2 Solution) Solution {
+	// Create the new solution by taking crossover from both inputs
+	newPlayers := make([]Player, len(solution1.players))
+	for i, _ := range newPlayers {
+		// Randomly take each player from solution1 or solution2
+		if rand.Intn(100) < 50 {
+			newPlayers[i] = solution1.players[i]
+		} else {
+			newPlayers[i] = solution2.players[i]
+		}
+	}
 
-	// Mutate the new solution
-	mutate(newSolution)
+	// Mutate the new player list
+	mutate(newPlayers)
 
-	newSolution.score = score(newSolution.players)
-	return
+	return Solution{newPlayers, score(newPlayers)}
 }
 
 func main() {
@@ -145,12 +151,18 @@ func main() {
 	// Create two random solutions to start
 	topSolutions := make([]Solution, 2)
 	for i, _ := range topSolutions {
-		randomizeTeams(players)
-		topSolutions[i] = Solution{players, score(players)}
+		ourPlayers := make([]Player, len(players))
+		copy(ourPlayers, players)
+		randomizeTeams(ourPlayers)
+		topSolutions[i] = Solution{ourPlayers, score(ourPlayers)}
 	}
 
+	topScore := topSolutions[0].score
 	for i := 0; i < numRuns; i++ {
-		fmt.Println("top scores:", topSolutions[0].score, topSolutions[1].score)
+		if topScore != topSolutions[0].score {
+			topScore = topSolutions[0].score
+			log.Println("New top score! Run number ", i, "Score:", topScore)
+		}
 
 		// Create new solutions by breeding the top two solutions
 		newSolutions := make([]Solution, 20)
@@ -167,6 +179,4 @@ func main() {
 		sort.Sort(ByScore(newSolutions))
 		topSolutions[0], topSolutions[1] = newSolutions[0], newSolutions[1]
 	}
-
-	fmt.Println("top scores:", topSolutions[0].score, topSolutions[1].score)
 }
