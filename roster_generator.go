@@ -13,9 +13,24 @@ import (
 )
 
 const numTeams = 6
+const numRuns = 10
 
 type Solution struct {
 	players []Player
+	score   float64
+}
+
+// Implement sort.Interface for []Solution, sorting based on score
+type ByScore []Solution
+
+func (a ByScore) Len() int {
+	return len(a)
+}
+func (a ByScore) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+func (a ByScore) Less(i, j int) bool {
+	return a[i].score < a[j].score
 }
 
 type Team struct {
@@ -35,8 +50,8 @@ const numberBalance = 10
 const genderBalance = 8
 
 // Score a solution based on weighted critera.
-func score(solution Solution) float64 {
-	teams := splitIntoTeams(solution.players)
+func score(players []Player) float64 {
+	teams := splitIntoTeams(players)
 
 	// Balanced by number
 	teamLengths := make([]int, numTeams)
@@ -73,10 +88,16 @@ func score(solution Solution) float64 {
 	return totalScore
 }
 
-func randomizeTeams(solution *Solution) {
-	for i, _ := range solution.players {
-		solution.players[i].team = uint8(rand.Intn(numTeams))
+func randomizeTeams(players []Player) {
+	for i, _ := range players {
+		players[i].team = uint8(rand.Intn(numTeams))
 	}
+}
+
+// Breed via combining the two given solutions, then randomly mutating.
+func breed(solution1 Solution, solution2 Solution) Solution {
+	// TODO
+	return solution1
 }
 
 func main() {
@@ -94,8 +115,32 @@ func main() {
 	}
 
 	players := ParsePlayers(*filenamePointer)
-	solution := Solution{players}
-	randomizeTeams(&solution)
 
-	fmt.Println("score:", score(solution))
+	// Create two random solutions to start
+	topSolutions := make([]Solution, 2)
+	for i, _ := range topSolutions {
+		randomizeTeams(players)
+		topSolutions[i] = Solution{players, score(players)}
+	}
+
+	for i := 0; i < numRuns; i++ {
+		fmt.Println("top scores:", topSolutions[0].score, topSolutions[1].score)
+
+		// Create new solutions by breeding the top two solutions
+		newSolutions := make([]Solution, 20)
+		for i, _ := range newSolutions {
+			// Keep the top solutions from last time - elitism!
+			if i <= 1 {
+				newSolutions[i] = topSolutions[i]
+				continue
+			}
+			newSolutions[i] = breed(topSolutions[0], topSolutions[1])
+		}
+
+		// Of all the solutions we now have, save only our best two
+		sortedSolutions := ByScore(newSolutions)
+		topSolutions[0], topSolutions[1] = sortedSolutions[0], sortedSolutions[1]
+	}
+
+	fmt.Println("top scores:", topSolutions[0].score, topSolutions[1].score)
 }
