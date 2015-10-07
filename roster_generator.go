@@ -30,6 +30,10 @@ func splitIntoTeams(players []Player) []Team {
 	return teams
 }
 
+// Weights to use to determine criteria importance
+const numberBalance = 10
+const genderBalance = 8
+
 // Score a solution based on weighted critera.
 func score(solution Solution) float64 {
 	teams := splitIntoTeams(solution.players)
@@ -42,6 +46,8 @@ func score(solution Solution) float64 {
 	fmt.Println("teamLengths", teamLengths)
 	teamsStdDev := baseutil.StandardDeviationInt(teamLengths)
 	fmt.Println("teamsStdDev", teamsStdDev)
+
+	totalScore := teamsStdDev
 
 	// Score on balance in gender.
 	//
@@ -61,9 +67,10 @@ func score(solution Solution) float64 {
 	for gender, teamList := range teamGenders {
 		teamsStdDev = baseutil.StandardDeviationInt(teamList)
 		fmt.Println("gender", gender, "std dev:", teamsStdDev)
+		totalScore += teamsStdDev
 	}
 
-	return teamsStdDev
+	return totalScore
 }
 
 func main() {
