@@ -58,9 +58,7 @@ func score(players []Player) float64 {
 	for i, team := range teams {
 		teamLengths[i] = len(team.players)
 	}
-	fmt.Println("teamLengths", teamLengths)
 	teamsStdDev := baseutil.StandardDeviationInt(teamLengths)
-	fmt.Println("teamsStdDev", teamsStdDev)
 
 	totalScore := teamsStdDev
 
@@ -78,10 +76,8 @@ func score(players []Player) float64 {
 			teamGenders[player.gender][teamNum] += 1
 		}
 	}
-	fmt.Println("teamGenders", teamGenders)
-	for gender, teamList := range teamGenders {
+	for _, teamList := range teamGenders {
 		teamsStdDev = baseutil.StandardDeviationInt(teamList)
-		fmt.Println("gender", gender, "std dev:", teamsStdDev)
 		totalScore += teamsStdDev
 	}
 
