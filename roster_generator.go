@@ -115,6 +115,9 @@ func main() {
 	}
 
 	players := ParsePlayers(*filenamePointer)
+	if len(players) == 0 {
+		panic("Could not find players")
+	}
 
 	// Create two random solutions to start
 	topSolutions := make([]Solution, 2)
