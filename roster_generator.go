@@ -13,8 +13,19 @@ import (
 	"github.com/topher200/baseutil"
 )
 
+// Number of teams to break players into
 const numTeams = 6
+
+// Number of times to run our genetic algorithm
 const numRuns = 10
+
+// Percent of the time we will try to mutate. After each mutation, we have a
+// mutationChance percent chance of mutating again.
+const mutationChance = 5
+
+// Weights to use to determine criteria importance
+const numberBalance = 10
+const genderBalance = 8
 
 type Solution struct {
 	players []Player
@@ -45,10 +56,6 @@ func splitIntoTeams(players []Player) []Team {
 	}
 	return teams
 }
-
-// Weights to use to determine criteria importance
-const numberBalance = 10
-const genderBalance = 8
 
 // Score a solution based on weighted critera.
 func score(players []Player) float64 {
@@ -91,10 +98,29 @@ func randomizeTeams(players []Player) {
 	}
 }
 
+// Mutate the solution by moving random players to random teams, sometimes.
+func mutate(solution Solution) {
+	for {
+		// We have mutationChance of mutating. Otherwise, we break out of our loop
+		if rand.Intn(100) > mutationChance {
+			return
+		}
+		// Mutation! Move a random player to a random new team
+		solution.players[rand.Intn(len(solution.players))].team =
+			uint8(rand.Intn(numTeams))
+	}
+}
+
 // Breed via combining the two given solutions, then randomly mutating.
-func breed(solution1 Solution, solution2 Solution) Solution {
-	// TODO
-	return solution1
+func breed(solution1 Solution, solution2 Solution) (newSolution Solution) {
+	// TODO combine
+	newSolution = solution1
+
+	// Mutate the new solution
+	mutate(newSolution)
+
+	newSolution.score = score(newSolution.players)
+	return
 }
 
 func main() {
