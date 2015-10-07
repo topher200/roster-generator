@@ -5,6 +5,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 	"time"
 
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -137,8 +138,8 @@ func main() {
 		}
 
 		// Of all the solutions we now have, save only our best two
-		sortedSolutions := ByScore(newSolutions)
-		topSolutions[0], topSolutions[1] = sortedSolutions[0], sortedSolutions[1]
+		sort.Sort(ByScore(newSolutions))
+		topSolutions[0], topSolutions[1] = newSolutions[0], newSolutions[1]
 	}
 
 	fmt.Println("top scores:", topSolutions[0].score, topSolutions[1].score)
