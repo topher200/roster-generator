@@ -72,7 +72,8 @@ func playerCountDifference(teams []Team) Score {
 }
 
 // runCriterion by filtering the input teams and running the criterion function
-func runCriterion(criterion Criterion, teams []Team) Score {
+func runCriterion(criterion Criterion, teams []Team) (
+	rawScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, team := range teams {
 		for _, player := range team.players {
@@ -81,11 +82,10 @@ func runCriterion(criterion Criterion, teams []Team) Score {
 			}
 		}
 	}
-	rawScore := criterion.calculate(filteredTeams)
-	weightedScore := Score(float64(rawScore) * float64(criterion.weight))
-	log.Printf("Scoring '%s'. Raw score %f, weighted score %f\n",
-		criterion.name, rawScore, weightedScore)
-	return weightedScore
+
+	rawScore = criterion.calculate(filteredTeams)
+	weightedScore = Score(float64(rawScore) * float64(criterion.weight))
+	return rawScore, weightedScore
 }
 
 // Score a solution based on weighted criteria.
