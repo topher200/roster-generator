@@ -63,6 +63,12 @@ type Criterion struct {
 	weight    int                          // how much weight to give this score
 }
 
+var Criteria = [...]Criterion{
+	Criterion{"number of players", playerCountDifference, nil, 10},
+	Criterion{"number of males", playerCountDifference, IsMale, 9},
+	Criterion{"number of females", playerCountDifference, IsFemale, 9},
+}
+
 func playerCountDifference(teams []Team) Score {
 	teamLengths := make([]int, numTeams)
 	for i, team := range teams {
@@ -89,29 +95,12 @@ func runCriterion(criterion Criterion, teams []Team) (
 }
 
 // Score a solution based on weighted criteria.
-func score(players []Player) Score {
+func score(players []Player) (totalScore Score) {
 	teams := splitIntoTeams(players)
-
-	// Balanced by number
-	// TODO
-	// Score on balance in gender.
-	//
-	// For each Gender we make a list of the number of players of that gender on
-	// each team. Then we take the standard deviation of those two lists to
-	// determine the gender imbalance.
-	balancedByPlayerCount := runCriterion(
-		Criterion{
-			"number of players", playerCountDifference, nil, 10}, teams)
-	balancedByPlayerCountMales := runCriterion(
-		Criterion{
-			"number of males", playerCountDifference, IsMale, 9}, teams)
-	balancedByPlayerCountFemales := runCriterion(
-		Criterion{
-			"number of females", playerCountDifference, IsFemale, 9}, teams)
-
-	totalScore := balancedByPlayerCount + balancedByPlayerCountMales +
-		balancedByPlayerCountFemales
-
+	for _, criterion := range Criteria {
+		_, weightedScore := runCriterion(criterion, teams)
+		totalScore += weightedScore
+	}
 	return totalScore
 }
 
