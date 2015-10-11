@@ -23,10 +23,6 @@ const numRuns = 100000
 // mutationChance percent chance of mutating again.
 const mutationChance = 5
 
-// Weights to use to determine criterion importance
-const numberBalance = 10
-const genderBalance = 8
-
 type Score float64
 type Solution struct {
 	players []Player
@@ -61,8 +57,10 @@ func splitIntoTeams(players []Player) []Team {
 type criterionCalculationFunction func(teams []Team) Score
 type playerFilter func(player Player) bool
 type Criterion struct {
-	calculate criterionCalculationFunction
-	filter    playerFilter
+	name      string                       // human readable name
+	calculate criterionCalculationFunction // how to calculate the raw score
+	filter    playerFilter                 // cull down to players that match
+	weight    int                          // how much weight to give this score
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -83,7 +81,8 @@ func runCriterion(criterion Criterion, teams []Team) Score {
 			}
 		}
 	}
-	return criterion.calculate(filteredTeams)
+	rawScore := criterion.calculate(filteredTeams)
+	return Score(float64(rawScore) * float64(criterion.weight))
 }
 
 // Score a solution based on weighted criteria.
@@ -98,11 +97,17 @@ func score(players []Player) Score {
 	// each team. Then we take the standard deviation of those two lists to
 	// determine the gender imbalance.
 	balancedByPlayerCount := runCriterion(
-		Criterion{playerCountDifference, nil}, teams)
+		Criterion{
+			"balance by number of players", playerCountDifference, nil, 10},
+		teams)
 	balancedByPlayerCountMales := runCriterion(
-		Criterion{playerCountDifference, IsMale}, teams)
+		Criterion{
+			"balance by number of males", playerCountDifference, IsMale, 9},
+		teams)
 	balancedByPlayerCountFemales := runCriterion(
-		Criterion{playerCountDifference, IsFemale}, teams)
+		Criterion{
+			"balance by number of females", playerCountDifference, IsFemale, 9},
+		teams)
 
 	totalScore := balancedByPlayerCount + balancedByPlayerCountMales +
 		balancedByPlayerCountFemales
