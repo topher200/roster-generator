@@ -190,12 +190,13 @@ func main() {
 		// Create new solutions by breeding the top two solutions
 		newSolutions := make([]Solution, 20)
 		for i, _ := range newSolutions {
-			// Keep the top solutions from last time - elitism!
 			if i <= 1 {
+				// Keep the top solutions from last time - elitism!
 				newSolutions[i] = topSolutions[i]
-				continue
+			} else {
+				// Make a new solution based on our top two from last time
+				newSolutions[i] = breed(topSolutions[0], topSolutions[1])
 			}
-			newSolutions[i] = breed(topSolutions[0], topSolutions[1])
 		}
 
 		// Of all the solutions we now have, save only our best two
