@@ -38,3 +38,8 @@ type Player struct {
 	gender Gender
 	team   uint8
 }
+
+// Implement fmt.Stringer for printing players
+func (player Player) String() string {
+	return fmt.Sprintf(" %v: rating %v\n", player.name, player.rating)
+}

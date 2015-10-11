@@ -66,7 +66,7 @@ func PrintTeams(solution Solution) {
 			i, len(teams[i].players), AverageRating(team))
 		for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
 			for _, player := range Filter(team.players, filterFunc) {
-				fmt.Printf(" %s: rating %f\n", player.name, player.rating)
+				fmt.Printf(" %s", player)
 			}
 		}
 	}
