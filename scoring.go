@@ -29,16 +29,21 @@ func playerCountDifference(teams []Team) Score {
 	return Score(baseutil.StandardDeviationInt(teamLengths))
 }
 
+func filter(players []Player, filter playerFilter) (filteredPlayers []Player) {
+	for _, player := range players {
+		if filter == nil || filter(player) {
+			filteredPlayers = append(filteredPlayers, player)
+		}
+	}
+	return
+}
+
 // runCriterion by filtering the input teams and running the criterion function
 func runCriterion(
 	c criterion, teams []Team) (rawScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
-	for i, team := range teams {
-		for _, player := range team.players {
-			if c.filter == nil || c.filter(player) {
-				filteredTeams[i].players = append(filteredTeams[i].players, player)
-			}
-		}
+	for i, _ := range teams {
+		filteredTeams[i].players = filter(teams[i].players, c.filter)
 	}
 
 	rawScore = c.calculate(filteredTeams)
