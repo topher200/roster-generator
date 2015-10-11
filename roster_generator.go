@@ -57,18 +57,35 @@ func splitIntoTeams(players []Player) []Team {
 	return teams
 }
 
-// Score a solution based on weighted critera.
-func score(players []Player) float64 {
-	teams := splitIntoTeams(players)
+type criteriaCalculationFunction func(teams []Team) float64
+type playerFilter func(players []Player) []Player
+type Criteria struct {
+	calculate criteriaCalculationFunction
+	filter    playerFilter
+}
 
-	// Balanced by number
+func playerCountDifference(teams []Team) float64 {
 	teamLengths := make([]int, numTeams)
 	for i, team := range teams {
 		teamLengths[i] = len(team.players)
 	}
-	teamsStdDev := baseutil.StandardDeviationInt(teamLengths)
+	return baseutil.StandardDeviationInt(teamLengths)
+}
 
-	totalScore := teamsStdDev
+func runCriteria(criteria Criteria, teams []Team) float64 {
+	// TODO filter
+	return criteria.calculate(teams)
+}
+
+// Score a solution based on weighted criteria.
+func score(players []Player) float64 {
+	teams := splitIntoTeams(players)
+
+	// Balanced by number
+	balancedByPlayerCount := runCriteria(
+		Criteria{playerCountDifference, nil}, teams)
+
+	totalScore := balancedByPlayerCount
 
 	// Score on balance in gender.
 	//
@@ -85,7 +102,7 @@ func score(players []Player) float64 {
 		}
 	}
 	for _, teamList := range teamGenders {
-		teamsStdDev = baseutil.StandardDeviationInt(teamList)
+		teamsStdDev := baseutil.StandardDeviationInt(teamList)
 		totalScore += teamsStdDev
 	}
 
