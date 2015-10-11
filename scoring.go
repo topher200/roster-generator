@@ -4,17 +4,17 @@ import "github.com/topher200/baseutil"
 
 type criterionCalculationFunction func(teams []Team) Score
 type playerFilter func(player Player) bool
-type Criterion struct {
+type criterion struct {
 	name      string                       // human readable name
 	calculate criterionCalculationFunction // how to calculate the raw score
 	filter    playerFilter                 // cull down to players that match
 	weight    int                          // how much weight to give this score
 }
 
-var Criteria = [...]Criterion{
-	Criterion{"number of players", playerCountDifference, nil, 10},
-	Criterion{"number of males", playerCountDifference, IsMale, 9},
-	Criterion{"number of females", playerCountDifference, IsFemale, 9},
+var criteriaToScore = [...]criterion{
+	criterion{"number of players", playerCountDifference, nil, 10},
+	criterion{"number of males", playerCountDifference, IsMale, 9},
+	criterion{"number of females", playerCountDifference, IsFemale, 9},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -26,26 +26,26 @@ func playerCountDifference(teams []Team) Score {
 }
 
 // runCriterion by filtering the input teams and running the criterion function
-func runCriterion(criterion Criterion, teams []Team) (
+func runCriterion(c criterion, teams []Team) (
 	rawScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, team := range teams {
 		for _, player := range team.players {
-			if criterion.filter == nil || criterion.filter(player) {
+			if c.filter == nil || c.filter(player) {
 				filteredTeams[i].players = append(filteredTeams[i].players, player)
 			}
 		}
 	}
 
-	rawScore = criterion.calculate(filteredTeams)
-	weightedScore = Score(float64(rawScore) * float64(criterion.weight))
+	rawScore = c.calculate(filteredTeams)
+	weightedScore = Score(float64(rawScore) * float64(c.weight))
 	return rawScore, weightedScore
 }
 
-// Score a solution based on weighted criteria.
+// Score a solution based on all known criteria.
 func ScorePossibleSolution(players []Player) (totalScore Score) {
 	teams := splitIntoTeams(players)
-	for _, criterion := range Criteria {
+	for _, criterion := range criteriaToScore {
 		_, weightedScore := runCriterion(criterion, teams)
 		totalScore += weightedScore
 	}
