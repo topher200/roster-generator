@@ -25,6 +25,13 @@ func StringToGender(s string) (Gender, error) {
 	return Default, fmt.Errorf("invalid gender '%s'", s)
 }
 
+func IsMale(player Player) bool {
+	return player.gender == Male
+}
+func IsFemale(player Player) bool {
+	return player.gender == Female
+}
+
 type Player struct {
 	name   string
 	value  float32
