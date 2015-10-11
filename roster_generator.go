@@ -82,7 +82,10 @@ func runCriterion(criterion Criterion, teams []Team) Score {
 		}
 	}
 	rawScore := criterion.calculate(filteredTeams)
-	return Score(float64(rawScore) * float64(criterion.weight))
+	weightedScore := Score(float64(rawScore) * float64(criterion.weight))
+	log.Printf("Scoring '%s'. Raw score %f, weighted score %f\n",
+		criterion.name, rawScore, weightedScore)
+	return weightedScore
 }
 
 // Score a solution based on weighted criteria.
@@ -98,16 +101,13 @@ func score(players []Player) Score {
 	// determine the gender imbalance.
 	balancedByPlayerCount := runCriterion(
 		Criterion{
-			"balance by number of players", playerCountDifference, nil, 10},
-		teams)
+			"number of players", playerCountDifference, nil, 10}, teams)
 	balancedByPlayerCountMales := runCriterion(
 		Criterion{
-			"balance by number of males", playerCountDifference, IsMale, 9},
-		teams)
+			"number of males", playerCountDifference, IsMale, 9}, teams)
 	balancedByPlayerCountFemales := runCriterion(
 		Criterion{
-			"balance by number of females", playerCountDifference, IsFemale, 9},
-		teams)
+			"number of females", playerCountDifference, IsFemale, 9}, teams)
 
 	totalScore := balancedByPlayerCount + balancedByPlayerCountMales +
 		balancedByPlayerCountFemales
