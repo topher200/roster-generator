@@ -3,6 +3,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"math/rand"
 	"sort"
@@ -55,6 +56,18 @@ func splitIntoTeams(players []Player) []Team {
 func randomizeTeams(players []Player) {
 	for i, _ := range players {
 		players[i].team = uint8(rand.Intn(numTeams))
+	}
+}
+
+func PrintTeams(solution Solution) {
+	teams := splitIntoTeams(solution.players)
+	for i, team := range teams {
+		fmt.Printf("Team #%d, %d players\n", i, len(teams[i].players))
+		for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
+			for _, player := range Filter(team.players, filterFunc) {
+				fmt.Printf(" %s: rating %f\n", player.name, player.value)
+			}
+		}
 	}
 }
 
@@ -143,5 +156,6 @@ func main() {
 	}
 	topSolution := topSolutions[0]
 	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
+	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
 }
