@@ -34,7 +34,7 @@ func IsFemale(player Player) bool {
 
 type Player struct {
 	name   string
-	value  float32
+	rating float32
 	gender Gender
 	team   uint8
 }

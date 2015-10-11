@@ -17,7 +17,7 @@ func ParsePlayers(inputFilename string) []Player {
 	defer file.Close()
 
 	// Read in our csv. Throw away the header. We expect the input to be of the
-	// form (player name, value, gender ('m' or 'f'))
+	// form (player name, rating, gender ('m' or 'f'))
 	playersCsv := csv.NewReader(file)
 	_, err = playersCsv.Read()
 	baseutil.Check(err)
@@ -27,11 +27,11 @@ func ParsePlayers(inputFilename string) []Player {
 	players := make([]Player, len(playersCsvLines))
 	baseutil.Check(err)
 	for i, player := range playersCsvLines {
-		value, err := strconv.ParseFloat(player[1], 32)
+		rating, err := strconv.ParseFloat(player[1], 32)
 		baseutil.Check(err)
 		gender, err := StringToGender(player[2])
 		baseutil.Check(err)
-		players[i] = Player{player[0], float32(value), gender, uint8(0)}
+		players[i] = Player{player[0], float32(rating), gender, uint8(0)}
 	}
 	return players
 }

@@ -1,4 +1,4 @@
-player,value,gender
+player,rating,gender
 Young Yother,82.8,f
 Nelson Nodal,46.1,f
 Lavada Larrimore,43.8,f

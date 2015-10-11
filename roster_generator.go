@@ -65,7 +65,7 @@ func PrintTeams(solution Solution) {
 		fmt.Printf("Team #%d, %d players\n", i, len(teams[i].players))
 		for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
 			for _, player := range Filter(team.players, filterFunc) {
-				fmt.Printf(" %s: rating %f\n", player.name, player.value)
+				fmt.Printf(" %s: rating %f\n", player.name, player.rating)
 			}
 		}
 	}
