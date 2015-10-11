@@ -27,9 +27,10 @@ const mutationChance = 5
 const numberBalance = 10
 const genderBalance = 8
 
+type Score float64
 type Solution struct {
 	players []Player
-	score   float64
+	score   Score
 }
 
 // Implement sort.Interface for []Solution, sorting based on score
@@ -57,28 +58,28 @@ func splitIntoTeams(players []Player) []Team {
 	return teams
 }
 
-type criteriaCalculationFunction func(teams []Team) float64
+type criteriaCalculationFunction func(teams []Team) Score
 type playerFilter func(players []Player) []Player
 type Criteria struct {
 	calculate criteriaCalculationFunction
 	filter    playerFilter
 }
 
-func playerCountDifference(teams []Team) float64 {
+func playerCountDifference(teams []Team) Score {
 	teamLengths := make([]int, numTeams)
 	for i, team := range teams {
 		teamLengths[i] = len(team.players)
 	}
-	return baseutil.StandardDeviationInt(teamLengths)
+	return Score(baseutil.StandardDeviationInt(teamLengths))
 }
 
-func runCriteria(criteria Criteria, teams []Team) float64 {
+func runCriteria(criteria Criteria, teams []Team) Score {
 	// TODO filter
 	return criteria.calculate(teams)
 }
 
 // Score a solution based on weighted criteria.
-func score(players []Player) float64 {
+func score(players []Player) Score {
 	teams := splitIntoTeams(players)
 
 	// Balanced by number
@@ -102,7 +103,7 @@ func score(players []Player) float64 {
 		}
 	}
 	for _, teamList := range teamGenders {
-		teamsStdDev := baseutil.StandardDeviationInt(teamList)
+		teamsStdDev := Score(baseutil.StandardDeviationInt(teamList))
 		totalScore += teamsStdDev
 	}
 
