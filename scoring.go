@@ -7,11 +7,11 @@ import (
 )
 
 type criterionCalculationFunction func(teams []Team) Score
-type playerFilter func(player Player) bool
+type PlayerFilter func(player Player) bool
 type criterion struct {
 	name      string                       // human readable name
 	calculate criterionCalculationFunction // how to calculate the raw score
-	filter    playerFilter                 // cull down to players that match
+	filter    PlayerFilter                 // cull down to players that match
 	weight    int                          // how much weight to give this score
 }
 
@@ -29,7 +29,7 @@ func playerCountDifference(teams []Team) Score {
 	return Score(baseutil.StandardDeviationInt(teamLengths))
 }
 
-func filter(players []Player, filter playerFilter) (filteredPlayers []Player) {
+func Filter(players []Player, filter PlayerFilter) (filteredPlayers []Player) {
 	for _, player := range players {
 		if filter == nil || filter(player) {
 			filteredPlayers = append(filteredPlayers, player)
@@ -43,7 +43,7 @@ func runCriterion(
 	c criterion, teams []Team) (rawScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, _ := range teams {
-		filteredTeams[i].players = filter(teams[i].players, c.filter)
+		filteredTeams[i].players = Filter(teams[i].players, c.filter)
 	}
 
 	rawScore = c.calculate(filteredTeams)
