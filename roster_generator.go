@@ -59,7 +59,7 @@ func splitIntoTeams(players []Player) []Team {
 }
 
 type criteriaCalculationFunction func(teams []Team) Score
-type playerFilter func(players []Player) []Player
+type playerFilter func(player Player) bool
 type Criteria struct {
 	calculate criteriaCalculationFunction
 	filter    playerFilter
@@ -73,9 +73,17 @@ func playerCountDifference(teams []Team) Score {
 	return Score(baseutil.StandardDeviationInt(teamLengths))
 }
 
+// runCriteria by filtering the input teams and running the criteria function
 func runCriteria(criteria Criteria, teams []Team) Score {
-	// TODO filter
-	return criteria.calculate(teams)
+	filteredTeams := make([]Team, len(teams))
+	for i, team := range teams {
+		for _, player := range team.players {
+			if criteria.filter == nil || criteria.filter(player) {
+				filteredTeams[i].players = append(filteredTeams[i].players, player)
+			}
+		}
+	}
+	return criteria.calculate(filteredTeams)
 }
 
 // Score a solution based on weighted criteria.
