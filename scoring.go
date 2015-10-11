@@ -43,7 +43,7 @@ func runCriterion(c criterion, teams []Team) (
 }
 
 // Score a solution based on all known criteria.
-func ScorePossibleSolution(players []Player) (totalScore Score) {
+func ScoreSolution(players []Player) (totalScore Score) {
 	teams := splitIntoTeams(players)
 	for _, criterion := range criteriaToScore {
 		_, weightedScore := runCriterion(criterion, teams)

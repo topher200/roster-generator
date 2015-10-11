@@ -86,7 +86,7 @@ func breed(solution1 Solution, solution2 Solution) Solution {
 	// Mutate the new player list
 	mutate(newPlayers)
 
-	return Solution{newPlayers, ScorePossibleSolution(newPlayers)}
+	return Solution{newPlayers, ScoreSolution(newPlayers)}
 }
 
 func main() {
@@ -114,7 +114,7 @@ func main() {
 		ourPlayers := make([]Player, len(players))
 		copy(ourPlayers, players)
 		randomizeTeams(ourPlayers)
-		topSolutions[i] = Solution{ourPlayers, ScorePossibleSolution(ourPlayers)}
+		topSolutions[i] = Solution{ourPlayers, ScoreSolution(ourPlayers)}
 	}
 
 	topScore := topSolutions[0].score
