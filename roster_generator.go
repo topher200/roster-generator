@@ -23,7 +23,7 @@ const numRuns = 100000
 // mutationChance percent chance of mutating again.
 const mutationChance = 5
 
-// Weights to use to determine criteria importance
+// Weights to use to determine criterion importance
 const numberBalance = 10
 const genderBalance = 8
 
@@ -58,10 +58,10 @@ func splitIntoTeams(players []Player) []Team {
 	return teams
 }
 
-type criteriaCalculationFunction func(teams []Team) Score
+type criterionCalculationFunction func(teams []Team) Score
 type playerFilter func(player Player) bool
-type Criteria struct {
-	calculate criteriaCalculationFunction
+type Criterion struct {
+	calculate criterionCalculationFunction
 	filter    playerFilter
 }
 
@@ -73,17 +73,17 @@ func playerCountDifference(teams []Team) Score {
 	return Score(baseutil.StandardDeviationInt(teamLengths))
 }
 
-// runCriteria by filtering the input teams and running the criteria function
-func runCriteria(criteria Criteria, teams []Team) Score {
+// runCriterion by filtering the input teams and running the criterion function
+func runCriterion(criterion Criterion, teams []Team) Score {
 	filteredTeams := make([]Team, len(teams))
 	for i, team := range teams {
 		for _, player := range team.players {
-			if criteria.filter == nil || criteria.filter(player) {
+			if criterion.filter == nil || criterion.filter(player) {
 				filteredTeams[i].players = append(filteredTeams[i].players, player)
 			}
 		}
 	}
-	return criteria.calculate(filteredTeams)
+	return criterion.calculate(filteredTeams)
 }
 
 // Score a solution based on weighted criteria.
@@ -91,8 +91,8 @@ func score(players []Player) Score {
 	teams := splitIntoTeams(players)
 
 	// Balanced by number
-	balancedByPlayerCount := runCriteria(
-		Criteria{playerCountDifference, nil}, teams)
+	balancedByPlayerCount := runCriterion(
+		Criterion{playerCountDifference, nil}, teams)
 
 	totalScore := balancedByPlayerCount
 
