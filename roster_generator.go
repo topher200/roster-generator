@@ -17,7 +17,7 @@ import (
 const numTeams = 6
 
 // Number of times to run our genetic algorithm
-const numRuns = 100000
+const numRuns = 100
 
 // Percent of the time we will try to mutate. After each mutation, we have a
 // mutationChance percent chance of mutating again.
