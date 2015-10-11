@@ -203,5 +203,6 @@ func main() {
 		sort.Sort(ByScore(newSolutions))
 		topSolutions[0], topSolutions[1] = newSolutions[0], newSolutions[1]
 	}
-	log.Printf("Top score is %f, solution: %v\n", topSolutions[0].score, topSolutions[0])
+	log.Printf(
+		"Top score is %f, solution: %v\n", topSolutions[0].score, topSolutions[0])
 }
