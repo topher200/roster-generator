@@ -30,8 +30,8 @@ func playerCountDifference(teams []Team) Score {
 }
 
 // runCriterion by filtering the input teams and running the criterion function
-func runCriterion(c criterion, teams []Team) (
-	rawScore Score, weightedScore Score) {
+func runCriterion(
+	c criterion, teams []Team) (rawScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, team := range teams {
 		for _, player := range team.players {
