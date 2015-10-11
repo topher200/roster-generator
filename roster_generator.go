@@ -91,29 +91,21 @@ func score(players []Player) Score {
 	teams := splitIntoTeams(players)
 
 	// Balanced by number
-	balancedByPlayerCount := runCriterion(
-		Criterion{playerCountDifference, nil}, teams)
-
-	totalScore := balancedByPlayerCount
-
+	// TODO
 	// Score on balance in gender.
 	//
 	// For each Gender we make a list of the number of players of that gender on
 	// each team. Then we take the standard deviation of those two lists to
 	// determine the gender imbalance.
-	teamGenders := make(map[Gender][]int)
-	for _, gender := range []Gender{Male, Female} {
-		teamGenders[gender] = make([]int, 6)
-	}
-	for teamNum, team := range teams {
-		for _, player := range team.players {
-			teamGenders[player.gender][teamNum] += 1
-		}
-	}
-	for _, teamList := range teamGenders {
-		teamsStdDev := Score(baseutil.StandardDeviationInt(teamList))
-		totalScore += teamsStdDev
-	}
+	balancedByPlayerCount := runCriterion(
+		Criterion{playerCountDifference, nil}, teams)
+	balancedByPlayerCountMales := runCriterion(
+		Criterion{playerCountDifference, IsMale}, teams)
+	balancedByPlayerCountFemales := runCriterion(
+		Criterion{playerCountDifference, IsFemale}, teams)
+
+	totalScore := balancedByPlayerCount + balancedByPlayerCountMales +
+		balancedByPlayerCountFemales
 
 	return totalScore
 }
