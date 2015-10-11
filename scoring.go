@@ -1,6 +1,10 @@
 package main
 
-import "github.com/topher200/baseutil"
+import (
+	"log"
+
+	"github.com/topher200/baseutil"
+)
 
 type criterionCalculationFunction func(teams []Team) Score
 type playerFilter func(player Player) bool
@@ -50,4 +54,16 @@ func ScoreSolution(players []Player) (totalScore Score) {
 		totalScore += weightedScore
 	}
 	return totalScore
+}
+
+func PrintSolutionScoring(solution Solution) {
+	teams := splitIntoTeams(solution.players)
+	totalScore := Score(0)
+	for _, criterion := range criteriaToScore {
+		rawScore, weightedScore := runCriterion(criterion, teams)
+		totalScore += weightedScore
+		log.Printf(
+			"Balancing %s. Raw score %f, weighted score %f. Running total: %f\n",
+			criterion.name, rawScore, weightedScore, totalScore)
+	}
 }

@@ -122,6 +122,7 @@ func main() {
 		if topScore != topSolutions[0].score {
 			topScore = topSolutions[0].score
 			log.Println("New top score! Run number ", i, "Score:", topScore)
+			PrintSolutionScoring(topSolutions[0])
 		}
 
 		// Create new solutions by breeding the top two solutions
@@ -140,6 +141,7 @@ func main() {
 		sort.Sort(ByScore(newSolutions))
 		topSolutions[0], topSolutions[1] = newSolutions[0], newSolutions[1]
 	}
-	log.Printf(
-		"Top score is %f, solution: %v\n", topSolutions[0].score, topSolutions[0])
+	topSolution := topSolutions[0]
+	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
+	PrintSolutionScoring(topSolution)
 }
