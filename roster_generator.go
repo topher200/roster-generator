@@ -62,7 +62,8 @@ func randomizeTeams(players []Player) {
 func PrintTeams(solution Solution) {
 	teams := splitIntoTeams(solution.players)
 	for i, team := range teams {
-		fmt.Printf("Team #%d, %d players\n", i, len(teams[i].players))
+		fmt.Printf("Team #%d, %d players. Average rating: %v\n",
+			i, len(teams[i].players), AverageRating(team))
 		for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
 			for _, player := range Filter(team.players, filterFunc) {
 				fmt.Printf(" %s: rating %f\n", player.name, player.rating)

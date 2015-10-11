@@ -29,6 +29,14 @@ func playerCountDifference(teams []Team) Score {
 	return Score(baseutil.StandardDeviationInt(teamLengths))
 }
 
+func AverageRating(team Team) Score {
+	sum := float32(0.0)
+	for _, player := range team.players {
+		sum += player.rating
+	}
+	return Score(sum / float32(len(team.players)))
+}
+
 func Filter(players []Player, filter PlayerFilter) (filteredPlayers []Player) {
 	for _, player := range players {
 		if filter == nil || filter(player) {
