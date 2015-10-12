@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
+	"os"
 	"sort"
+	"text/tabwriter"
 	"time"
 
 	"gopkg.in/alecthomas/kingpin.v2"
@@ -64,13 +66,16 @@ func PrintTeams(solution Solution) {
 	for i, team := range teams {
 		fmt.Printf("Team #%d, %d players. Average rating: %.2f\n",
 			i, len(teams[i].players), AverageRating(team))
+		writer := new(tabwriter.Writer)
+		writer.Init(os.Stdout, 0, 0, 1, ' ', 0)
 		for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
 			filteredPlayers := Filter(team.players, filterFunc)
 			sort.Sort(sort.Reverse(ByRating(filteredPlayers)))
 			for _, player := range filteredPlayers {
-				fmt.Printf("%s", player)
+				fmt.Fprintln(writer, player)
 			}
 		}
+		writer.Flush()
 	}
 }
 

@@ -48,7 +48,7 @@ func (player Player) String() string {
 	case Female:
 		genderString = "F"
 	}
-	return fmt.Sprintf(" %v, %v: rating %v\n",
+	return fmt.Sprintf("%v,\t%v,\trating: %v",
 		player.name, genderString, player.rating)
 }
 
