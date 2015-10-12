@@ -21,6 +21,7 @@ var criteriaToScore = [...]criterion{
 	criterion{"number of males", playerCountDifference, IsMale, 9},
 	criterion{"number of females", playerCountDifference, IsFemale, 9},
 	criterion{"average rating", ratingDifference, nil, 8},
+	criterion{"std dev of team ratings", ratingStdDev, nil, 5},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -37,6 +38,18 @@ func ratingDifference(teams []Team) Score {
 		teamAverageRatings[i] = float64(AverageRating(team))
 	}
 	return Score(stats.StatsSampleStandardDeviation(teamAverageRatings))
+}
+
+func ratingStdDev(teams []Team) Score {
+	teamRatingsStdDev := make([]float64, numTeams)
+	for i, team := range teams {
+		playerRatings := make([]float64, len(team.players))
+		for j, player := range team.players {
+			playerRatings[j] = float64(player.rating)
+		}
+		teamRatingsStdDev[i] = stats.StatsSampleStandardDeviation(playerRatings)
+	}
+	return Score(stats.StatsSampleStandardDeviation(teamRatingsStdDev))
 }
 
 func AverageRating(team Team) Score {
