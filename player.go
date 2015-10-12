@@ -41,5 +41,26 @@ type Player struct {
 
 // Implement fmt.Stringer for printing players
 func (player Player) String() string {
-	return fmt.Sprintf(" %v: rating %v\n", player.name, player.rating)
+	genderString := ""
+	switch player.gender {
+	case Male:
+		genderString = "M"
+	case Female:
+		genderString = "F"
+	}
+	return fmt.Sprintf(" %v, %v: rating %v\n",
+		player.name, genderString, player.rating)
+}
+
+// Implement sorting for []Player based on rating
+type ByRating []Player
+
+func (a ByRating) Len() int {
+	return len(a)
+}
+func (a ByRating) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+func (a ByRating) Less(i, j int) bool {
+	return a[i].rating < a[j].rating
 }
