@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 
+	"github.com/GaryBoone/GoStats/stats"
 	"github.com/topher200/baseutil"
 )
 
@@ -19,6 +20,7 @@ var criteriaToScore = [...]criterion{
 	criterion{"number of players", playerCountDifference, nil, 10},
 	criterion{"number of males", playerCountDifference, IsMale, 9},
 	criterion{"number of females", playerCountDifference, IsFemale, 9},
+	criterion{"average rating", ratingDifference, nil, 8},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -27,6 +29,14 @@ func playerCountDifference(teams []Team) Score {
 		teamLengths[i] = len(team.players)
 	}
 	return Score(baseutil.StandardDeviationInt(teamLengths))
+}
+
+func ratingDifference(teams []Team) Score {
+	teamAverageRatings := make([]float64, numTeams)
+	for i, team := range teams {
+		teamAverageRatings[i] = float64(AverageRating(team))
+	}
+	return Score(stats.StatsSampleStandardDeviation(teamAverageRatings))
 }
 
 func AverageRating(team Team) Score {
