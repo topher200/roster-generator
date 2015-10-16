@@ -12,14 +12,14 @@ const (
 	Default
 )
 
-// StringToGender parses single character string into a Gender.
+// StringToGender parses a raw input string into a Gender.
 //
-// The string must be either "m" or "f", or we return error.
+// The string must be either "Male" or "Female", or we return error.
 func StringToGender(s string) (Gender, error) {
 	switch s {
-	case "m":
+	case "Male":
 		return Male, nil
-	case "f":
+	case "Female":
 		return Female, nil
 	}
 	return Default, fmt.Errorf("invalid gender '%s'", s)
