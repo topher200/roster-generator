@@ -32,12 +32,13 @@ func ParsePlayers(inputFilename string) []Player {
 	baseutil.Check(err)
 	for i, player := range playersCsvLines {
 		firstName := player[1]
-		// lastName := player[2]
+		lastName := player[2]
 		gender, err := StringToGender(player[6])
 		baseutil.Check(err)
 		rating, err := strconv.ParseFloat(player[33], 32)
 		baseutil.Check(err)
-		players[i] = Player{firstName, float32(rating), gender, uint8(0)}
+		players[i] = Player{
+			firstName, lastName, float32(rating), gender, uint8(0)}
 	}
 	return players
 }

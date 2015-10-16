@@ -33,10 +33,11 @@ func IsFemale(player Player) bool {
 }
 
 type Player struct {
-	name   string
-	rating float32
-	gender Gender
-	team   uint8
+	firstName string
+	lastName  string
+	rating    float32
+	gender    Gender
+	team      uint8
 }
 
 // Implement fmt.Stringer for printing players
@@ -48,8 +49,8 @@ func (player Player) String() string {
 	case Female:
 		genderString = "F"
 	}
-	return fmt.Sprintf("%v,\t%v,\trating: %v",
-		player.name, genderString, player.rating)
+	return fmt.Sprintf("%v %v,\t%v,\trating: %v",
+		player.firstName, player.lastName, genderString, player.rating)
 }
 
 // Implement sorting for []Player based on rating
