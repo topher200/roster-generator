@@ -116,6 +116,23 @@ func breed(solution1 Solution, solution2 Solution) Solution {
 	return Solution{newPlayers, ScoreSolution(newPlayers)}
 }
 
+// performRun creates a new solution list by breeding parents.
+func performRun(parents []Solution) []Solution {
+	newSolutions := make([]Solution, numSolutionsPerRun)
+	for i, _ := range newSolutions {
+		if i < numParents {
+			// Keep the parents from last time - elitism!
+			newSolutions[i] = parents[i]
+		} else {
+			// Make a new solution based on two random parents
+			newSolutions[i] = breed(
+				parents[rand.Intn(len(parents))],
+				parents[rand.Intn(len(parents))])
+		}
+	}
+	return newSolutions
+}
+
 func parseCommandLine() []Player {
 	filenamePointer := kingpin.Arg("input-file",
 		"filename from which to get list of players").
@@ -155,21 +172,8 @@ func main() {
 			PrintSolutionScoring(topSolutions[0])
 		}
 
-		// Create new solutions by breeding two of the Parents
-		newSolutions := make([]Solution, numSolutionsPerRun)
-		for i, _ := range newSolutions {
-			if i < numParents {
-				// Keep the top solutions from last time - elitism!
-				newSolutions[i] = topSolutions[i]
-			} else {
-				// Make a new solution based on two random Parents
-				newSolutions[i] = breed(
-					topSolutions[rand.Intn(len(topSolutions))],
-					topSolutions[rand.Intn(len(topSolutions))])
-			}
-		}
-
-		// Of all the solutions we now have, save only our best
+		// Create new solutions, and save the best ones
+		newSolutions := performRun(topSolutions)
 		sort.Sort(ByScore(newSolutions))
 		for i, _ := range topSolutions {
 			topSolutions[i] = newSolutions[i]
