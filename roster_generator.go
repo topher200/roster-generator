@@ -110,8 +110,7 @@ func breed(solution1 Solution, solution2 Solution) Solution {
 	return Solution{newPlayers, ScoreSolution(newPlayers)}
 }
 
-func main() {
-	// Read command line input
+func parseCommandLine() []Player {
 	filenamePointer := kingpin.Arg("input-file",
 		"filename from which to get list of players").
 		Required().String()
@@ -124,7 +123,11 @@ func main() {
 		rand.Seed(time.Now().UTC().UnixNano())
 	}
 
-	players := ParsePlayers(*filenamePointer)
+	return ParsePlayers(*filenamePointer)
+}
+
+func main() {
+	players := parseCommandLine()
 	if len(players) == 0 {
 		panic("Could not find players")
 	}
