@@ -14,15 +14,21 @@ import (
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
-// Number of teams to break players into
-const numTeams = 6
-
-// Number of times to run our genetic algorithm
-const numRuns = 100
-
-// Percent of the time we will try to mutate. After each mutation, we have a
-// mutationChance percent chance of mutating again.
-const mutationChance = 5
+// Genetic algorithm constants
+const (
+	// Number of teams to break players into
+	numTeams = 6
+	// Number of times to run our genetic algorithm
+	numRuns = 100
+	// Percent of the time we will try to mutate. After each
+	// mutation, we have a mutationChance percent chance of
+	// mutating again.
+	mutationChance = 5
+	// We will make numSolutionsPerRun every run, and numParents carry
+	// over into the next run to create the next batch of solutions.
+	numSolutionsPerRun = 1000
+	numParents         = 20
+)
 
 type Score float64
 type Solution struct {
@@ -132,8 +138,8 @@ func main() {
 		panic("Could not find players")
 	}
 
-	// Create two random solutions to start
-	topSolutions := make([]Solution, 2)
+	// Create random Parent solutions to start
+	topSolutions := make([]Solution, numParents)
 	for i, _ := range topSolutions {
 		ourPlayers := make([]Player, len(players))
 		copy(ourPlayers, players)
@@ -149,21 +155,25 @@ func main() {
 			PrintSolutionScoring(topSolutions[0])
 		}
 
-		// Create new solutions by breeding the top two solutions
-		newSolutions := make([]Solution, 20)
+		// Create new solutions by breeding two of the Parents
+		newSolutions := make([]Solution, numSolutionsPerRun)
 		for i, _ := range newSolutions {
-			if i <= 1 {
+			if i < numParents {
 				// Keep the top solutions from last time - elitism!
 				newSolutions[i] = topSolutions[i]
 			} else {
-				// Make a new solution based on our top two from last time
-				newSolutions[i] = breed(topSolutions[0], topSolutions[1])
+				// Make a new solution based on two random Parents
+				newSolutions[i] = breed(
+					topSolutions[rand.Intn(len(topSolutions))],
+					topSolutions[rand.Intn(len(topSolutions))])
 			}
 		}
 
-		// Of all the solutions we now have, save only our best two
+		// Of all the solutions we now have, save only our best
 		sort.Sort(ByScore(newSolutions))
-		topSolutions[0], topSolutions[1] = newSolutions[0], newSolutions[1]
+		for i, _ := range topSolutions {
+			topSolutions[i] = newSolutions[i]
+		}
 	}
 	topSolution := topSolutions[0]
 	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
