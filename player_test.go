@@ -7,10 +7,10 @@ import (
 )
 
 func TestStringToGender(t *testing.T) {
-	gender, err := StringToGender("m")
+	gender, err := StringToGender("Male")
 	assert.Nil(t, err)
 	assert.Equal(t, gender, Male)
-	gender, err = StringToGender("f")
+	gender, err = StringToGender("Female")
 	assert.Nil(t, err)
 	assert.Equal(t, gender, Female)
 	gender, err = StringToGender("")
