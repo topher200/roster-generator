@@ -166,10 +166,13 @@ func main() {
 		parentSolutions[i] = Solution{ourPlayers, solutionScore}
 	}
 
+	// Use the random starting solutions to determine the worst case for each of
+	// our criteria
 	PopulateWorstCases(parentSolutions)
 
 	topScore := parentSolutions[0].score
 	for i := 0; i < numRuns; i++ {
+		// If we have a new best score, save and print it!
 		if topScore != parentSolutions[0].score {
 			topScore = parentSolutions[0].score
 			log.Println("New top score! Run number ", i, "Score:", topScore)
@@ -183,6 +186,8 @@ func main() {
 			parentSolutions[i] = newSolutions[i]
 		}
 	}
+
+	// Display our solution to the user
 	topSolution := parentSolutions[0]
 	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
 	PrintTeams(topSolution)
