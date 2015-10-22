@@ -16,8 +16,9 @@ func ParsePlayers(inputFilename string) []Player {
 	baseutil.Check(err)
 	defer file.Close()
 
-	// Read in our csv. Throw away the header. We expect the input to be of the
-	// form:
+	// Read in our csv. Throw away the header. Because we're getting our input
+	// directly from the league signup form, we expect the input to be shaped like
+	// this:
 	// Field 1: First name
 	// Field 2: Last name
 	// Field 6: "Male" or "Female"
