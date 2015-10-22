@@ -7,6 +7,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"runtime"
 	"sort"
 	"text/tabwriter"
 	"time"
@@ -119,21 +120,37 @@ func breed(solution1 Solution, solution2 Solution) Solution {
 	return Solution{newPlayers, solutionScore}
 }
 
-// performRun creates a new solution list by breeding parents.
-func performRun(parents []Solution) []Solution {
-	newSolutions := make([]Solution, numSolutionsPerRun)
-	for i, _ := range newSolutions {
-		if i < numParents {
-			// Keep the parents from last time - elitism!
-			newSolutions[i] = parents[i]
-		} else {
-			// Make a new solution based on two random parents
-			newSolutions[i] = breed(
-				parents[rand.Intn(len(parents))],
-				parents[rand.Intn(len(parents))])
-		}
+type workerTask struct {
+	parent1, parent2 Solution
+}
+
+func worker(tasks <-chan workerTask, results chan<- Solution) {
+	for task := range tasks {
+		results <- breed(task.parent1, task.parent2)
 	}
-	return newSolutions
+}
+
+// performRun creates a new solution list by breeding parents.
+func performRun(
+	parents []Solution, tasks chan<- workerTask, results <-chan Solution) []Solution {
+	solutions := make([]Solution, numSolutionsPerRun)
+
+	// Keep the parents from last time - elitism!
+	for i := 0; i < numParents; i++ {
+		solutions[i] = parents[i]
+	}
+
+	// Start jobs
+	for i := numParents; i < numSolutionsPerRun; i++ {
+		tasks <- workerTask{
+			parents[rand.Intn(len(parents))], parents[rand.Intn(len(parents))]}
+	}
+
+	// Retreive the results of our jobs
+	for i := numParents; i < numSolutionsPerRun; i++ {
+		solutions[i] = <-results
+	}
+	return solutions
 }
 
 // parseCommandLine returns a list of players and a bool for running profiler
@@ -181,6 +198,14 @@ func main() {
 	// our criteria
 	PopulateWorstCases(parentSolutions)
 
+	// Start our worker goroutines
+	tasks := make(chan workerTask, numSolutionsPerRun)
+	results := make(chan Solution, numSolutionsPerRun)
+	for i := 0; i < runtime.NumCPU(); i++ {
+		go worker(tasks, results)
+	}
+	defer close(tasks)
+
 	topScore := parentSolutions[0].score
 	for i := 0; i < numRuns; i++ {
 		// If we have a new best score, save and print it!
@@ -191,7 +216,7 @@ func main() {
 		}
 
 		// Create new solutions, and save the best ones
-		newSolutions := performRun(parentSolutions)
+		newSolutions := performRun(parentSolutions, tasks, results)
 		sort.Sort(ByScore(newSolutions))
 		for i, _ := range parentSolutions {
 			parentSolutions[i] = newSolutions[i]
