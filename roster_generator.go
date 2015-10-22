@@ -153,8 +153,13 @@ func performRun(
 	return solutions
 }
 
-// parseCommandLine returns a list of players and a bool for running profiler
-func parseCommandLine() ([]Player, bool) {
+// parseCommandLine parses the user input
+//
+// Returns:
+//  - a []Player of the players from the input file
+//  - a bool which tells us whether or not we should be profiling
+//  - the number of CPUs to use for goroutines, which is manipulated by "-d"
+func parseCommandLine() ([]Player, bool, int) {
 	filenamePointer := kingpin.Arg("input-file",
 		"filename from which to get list of players").
 		Required().String()
@@ -165,17 +170,20 @@ func parseCommandLine() ([]Player, bool) {
 		"output profiling stats when true").Short('p').Bool()
 	kingpin.Parse()
 
+	// To run deterministically, we use the default seed and only one goroutine
+	numWorkers := runtime.NumCPU()
 	if !*deterministicPointer {
 		rand.Seed(time.Now().UTC().UnixNano())
 	} else {
 		log.Println("Seeded deterministically")
+		numWorkers = 1
 	}
 
-	return ParsePlayers(*filenamePointer), *runProfilingPointer
+	return ParsePlayers(*filenamePointer), *runProfilingPointer, numWorkers
 }
 
 func main() {
-	players, profilingOn := parseCommandLine()
+	players, profilingOn, numWorkers := parseCommandLine()
 	if len(players) == 0 {
 		panic("Could not find players")
 	}
@@ -203,7 +211,7 @@ func main() {
 	// Start our worker goroutines
 	tasks := make(chan workerTask, numSolutionsPerRun)
 	results := make(chan Solution, numSolutionsPerRun)
-	for i := 0; i < runtime.NumCPU(); i++ {
+	for i := 0; i < numWorkers; i++ {
 		go worker(tasks, results)
 	}
 	defer close(tasks)
