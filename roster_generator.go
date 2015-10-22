@@ -184,6 +184,7 @@ func parseCommandLine() ([]Player, bool, int) {
 
 func main() {
 	players, profilingOn, numWorkers := parseCommandLine()
+	startTime := time.Now()
 	if len(players) == 0 {
 		panic("Could not find players")
 	}
@@ -238,4 +239,5 @@ func main() {
 	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
+	log.Println("Program runtime:", time.Since(startTime).String())
 }
