@@ -157,33 +157,33 @@ func main() {
 	}
 
 	// Create random Parent solutions to start
-	topSolutions := make([]Solution, numParents)
-	for i, _ := range topSolutions {
+	parentSolutions := make([]Solution, numParents)
+	for i, _ := range parentSolutions {
 		ourPlayers := make([]Player, len(players))
 		copy(ourPlayers, players)
 		randomizeTeams(ourPlayers)
 		solutionScore, _ := ScoreSolution(ourPlayers)
-		topSolutions[i] = Solution{ourPlayers, solutionScore}
+		parentSolutions[i] = Solution{ourPlayers, solutionScore}
 	}
 
-	PopulateWorstCases(topSolutions)
+	PopulateWorstCases(parentSolutions)
 
-	topScore := topSolutions[0].score
+	topScore := parentSolutions[0].score
 	for i := 0; i < numRuns; i++ {
-		if topScore != topSolutions[0].score {
-			topScore = topSolutions[0].score
+		if topScore != parentSolutions[0].score {
+			topScore = parentSolutions[0].score
 			log.Println("New top score! Run number ", i, "Score:", topScore)
-			PrintSolutionScoring(topSolutions[0])
+			PrintSolutionScoring(parentSolutions[0])
 		}
 
 		// Create new solutions, and save the best ones
-		newSolutions := performRun(topSolutions)
+		newSolutions := performRun(parentSolutions)
 		sort.Sort(ByScore(newSolutions))
-		for i, _ := range topSolutions {
-			topSolutions[i] = newSolutions[i]
+		for i, _ := range parentSolutions {
+			parentSolutions[i] = newSolutions[i]
 		}
 	}
-	topSolution := topSolutions[0]
+	topSolution := parentSolutions[0]
 	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
