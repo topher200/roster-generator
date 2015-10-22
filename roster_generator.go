@@ -11,6 +11,8 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/pkg/profile"
+
 	"gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -134,26 +136,35 @@ func performRun(parents []Solution) []Solution {
 	return newSolutions
 }
 
-func parseCommandLine() []Player {
+// parseCommandLine returns a list of players and a bool for running profiler
+func parseCommandLine() ([]Player, bool) {
 	filenamePointer := kingpin.Arg("input-file",
 		"filename from which to get list of players").
 		Required().String()
 	deterministicPointer := kingpin.Flag("deterministic",
 		"makes our output deterministic by allowing the default rand.Seed").
 		Short('d').Bool()
+	runProfilingPointer := kingpin.Flag("profiling",
+		"output profiling stats when true").Short('p').Bool()
 	kingpin.Parse()
 
 	if !*deterministicPointer {
 		rand.Seed(time.Now().UTC().UnixNano())
 	}
 
-	return ParsePlayers(*filenamePointer)
+	return ParsePlayers(*filenamePointer), *runProfilingPointer
 }
 
 func main() {
-	players := parseCommandLine()
+	players, profilingOn := parseCommandLine()
 	if len(players) == 0 {
 		panic("Could not find players")
+	}
+
+	// Start profiler
+	if profilingOn {
+		log.Println("Running profiler")
+		defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
 	}
 
 	// Create random Parent solutions to start
