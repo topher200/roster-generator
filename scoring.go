@@ -81,7 +81,8 @@ func runCriterion(
 	}
 
 	rawScore = c.calculate(filteredTeams)
-	weightedScore = Score(float64(rawScore) * float64(c.weight))
+	// We normalize our weighted scores based on the worst case scenario
+	weightedScore = (rawScore / c.worstCase) * Score(c.weight)
 	return rawScore, weightedScore
 }
 
