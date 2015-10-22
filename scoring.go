@@ -14,14 +14,17 @@ type criterion struct {
 	calculate criterionCalculationFunction // how to calculate the raw score
 	filter    PlayerFilter                 // cull down to players that match
 	weight    int                          // how much weight to give this score
+	// worstCase is calculated at runtime to be the absolute worst score we can
+	// see this criterion getting
+	worstCase Score
 }
 
 var criteriaToScore = [...]criterion{
-	criterion{"number of players", playerCountDifference, nil, 10},
-	criterion{"number of males", playerCountDifference, IsMale, 9},
-	criterion{"number of females", playerCountDifference, IsFemale, 9},
-	criterion{"average rating", ratingDifference, nil, 8},
-	criterion{"std dev of team ratings", ratingStdDev, nil, 5},
+	criterion{"number of players", playerCountDifference, nil, 10, 0},
+	criterion{"number of males", playerCountDifference, IsMale, 9, 0},
+	criterion{"number of females", playerCountDifference, IsFemale, 9, 0},
+	criterion{"average rating", ratingDifference, nil, 8, 0},
+	criterion{"std dev of team ratings", ratingStdDev, nil, 5, 0},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -82,14 +85,41 @@ func runCriterion(
 	return rawScore, weightedScore
 }
 
+func maxScore(a, b Score) Score {
+	if a > b {
+		return a
+	} else {
+		return b
+	}
+}
+
+// PopulateWorstCases calculates the worst case of each criterion.
+//
+// The function has the side effect of filling in the worstCase param for each
+// criterion in criteriaToScore.
+func PopulateWorstCases(solutions []Solution) {
+	for _, solution := range solutions {
+		_, rawScores := ScoreSolution(solution.players)
+		for i, criterion := range criteriaToScore {
+			criteriaToScore[i].worstCase = maxScore(
+				criterion.worstCase, rawScores[i])
+		}
+	}
+}
+
 // Score a solution based on all known criteria.
-func ScoreSolution(players []Player) (totalScore Score) {
+//
+// Returns the total score for the solution, as well as the raw score found for
+// each of the criteriaToScore.
+func ScoreSolution(players []Player) (totalScore Score, rawScores []Score) {
 	teams := splitIntoTeams(players)
-	for _, criterion := range criteriaToScore {
-		_, weightedScore := runCriterion(criterion, teams)
+	rawScores = make([]Score, len(criteriaToScore))
+	for i, criterion := range criteriaToScore {
+		rawScore, weightedScore := runCriterion(criterion, teams)
+		rawScores[i] = rawScore
 		totalScore += weightedScore
 	}
-	return totalScore
+	return totalScore, rawScores
 }
 
 func PrintSolutionScoring(solution Solution) {
@@ -99,7 +129,7 @@ func PrintSolutionScoring(solution Solution) {
 		rawScore, weightedScore := runCriterion(criterion, teams)
 		totalScore += weightedScore
 		log.Printf(
-			"Balancing %s. Raw score %f, weighted score %f. Running total: %f\n",
-			criterion.name, rawScore, weightedScore, totalScore)
+			"Balancing %s. Raw score %f (worst case %f), weighted score %f. Running total: %f\n",
+			criterion.name, rawScore, criterion.worstCase, weightedScore, totalScore)
 	}
 }

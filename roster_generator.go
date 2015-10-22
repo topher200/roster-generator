@@ -113,7 +113,8 @@ func breed(solution1 Solution, solution2 Solution) Solution {
 	// Mutate the new player list
 	mutate(newPlayers)
 
-	return Solution{newPlayers, ScoreSolution(newPlayers)}
+	solutionScore, _ := ScoreSolution(newPlayers)
+	return Solution{newPlayers, solutionScore}
 }
 
 // performRun creates a new solution list by breeding parents.
@@ -161,8 +162,11 @@ func main() {
 		ourPlayers := make([]Player, len(players))
 		copy(ourPlayers, players)
 		randomizeTeams(ourPlayers)
-		topSolutions[i] = Solution{ourPlayers, ScoreSolution(ourPlayers)}
+		solutionScore, _ := ScoreSolution(ourPlayers)
+		topSolutions[i] = Solution{ourPlayers, solutionScore}
 	}
+
+	PopulateWorstCases(topSolutions)
 
 	topScore := topSolutions[0].score
 	for i := 0; i < numRuns; i++ {
