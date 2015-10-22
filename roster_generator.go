@@ -167,6 +167,8 @@ func parseCommandLine() ([]Player, bool) {
 
 	if !*deterministicPointer {
 		rand.Seed(time.Now().UTC().UnixNano())
+	} else {
+		log.Println("Seeded deterministically")
 	}
 
 	return ParsePlayers(*filenamePointer), *runProfilingPointer
