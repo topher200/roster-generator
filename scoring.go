@@ -1,8 +1,6 @@
 package main
 
 import (
-	"log"
-
 	"github.com/GaryBoone/GoStats/stats"
 	"github.com/topher200/baseutil"
 )
@@ -129,8 +127,8 @@ func PrintSolutionScoring(solution Solution) {
 	for _, criterion := range criteriaToScore {
 		rawScore, weightedScore := runCriterion(criterion, teams)
 		totalScore += weightedScore
-		log.Printf(
-			"Balancing %s. Raw score %f (worst case %f), weighted score %f. Running total: %f\n",
-			criterion.name, rawScore, criterion.worstCase, weightedScore, totalScore)
+		newLog.Info(
+			"Balancing %s. Weighted score %f. Raw score %f (worst case %f). Running total: %f\n",
+			criterion.name, weightedScore, rawScore, criterion.worstCase, totalScore)
 	}
 }

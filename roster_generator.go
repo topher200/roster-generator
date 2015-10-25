@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
 	"runtime"
@@ -12,10 +11,13 @@ import (
 	"text/tabwriter"
 	"time"
 
+	"github.com/op/go-logging"
 	"github.com/pkg/profile"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
+
+var newLog = logging.MustGetLogger("")
 
 // Genetic algorithm constants
 const (
@@ -170,12 +172,18 @@ func parseCommandLine() ([]Player, bool, int) {
 		"output profiling stats when true").Short('p').Bool()
 	kingpin.Parse()
 
+	// Set up logging
+	logBackend := logging.NewLogBackend(os.Stdout, "", 0)
+	logBackendLeveled := logging.AddModuleLevel(logBackend)
+	logBackendLeveled.SetLevel(logging.INFO, "")
+	logging.SetBackend(logBackend)
+
 	// To run deterministically, we use the default seed and only one goroutine
 	numWorkers := runtime.NumCPU()
 	if !*deterministicPointer {
 		rand.Seed(time.Now().UTC().UnixNano())
 	} else {
-		log.Println("Seeded deterministically")
+		newLog.Info("Seeded deterministically")
 		numWorkers = 1
 	}
 
@@ -191,7 +199,7 @@ func main() {
 
 	// Start profiler
 	if profilingOn {
-		log.Println("Running profiler")
+		newLog.Info("Running profiler")
 		defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
 	}
 
@@ -222,7 +230,7 @@ func main() {
 		// If we have a new best score, save and print it!
 		if topScore != parentSolutions[0].score {
 			topScore = parentSolutions[0].score
-			log.Println("New top score! Run number ", i, "Score:", topScore)
+			newLog.Info("New top score! Run number ", i, "Score:", topScore)
 			PrintSolutionScoring(parentSolutions[0])
 		}
 
@@ -236,8 +244,8 @@ func main() {
 
 	// Display our solution to the user
 	topSolution := parentSolutions[0]
-	log.Printf("Top score is %f, solution: %v\n", topSolution, topSolution)
+	newLog.Info("Top score is %f, solution: %v\n", topSolution, topSolution)
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
-	log.Println("Program runtime:", time.Since(startTime).String())
+	newLog.Info("Program runtime:", time.Since(startTime).String())
 }
