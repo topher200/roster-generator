@@ -1,6 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"os"
+	"text/tabwriter"
+
 	"github.com/GaryBoone/GoStats/stats"
 	"github.com/topher200/baseutil"
 )
@@ -124,11 +128,15 @@ func ScoreSolution(players []Player) (totalScore Score, rawScores []Score) {
 func PrintSolutionScoring(solution Solution) {
 	teams := splitIntoTeams(solution.players)
 	totalScore := Score(0)
+	writer := new(tabwriter.Writer)
+	writer.Init(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, criterion := range criteriaToScore {
 		rawScore, weightedScore := runCriterion(criterion, teams)
 		totalScore += weightedScore
-		newLog.Info(
-			"Balancing %s. Weighted score %.02f. Raw score %.02f (worst case %.02f). Running total: %.02f",
+		fmt.Fprintf(
+			writer,
+			"Balancing %s.\tWeighted score %.02f.\tRaw score %.02f (worst case %.02f).\tRunning total: %.02f\n",
 			criterion.name, weightedScore, rawScore, criterion.worstCase, totalScore)
 	}
+	writer.Flush()
 }
