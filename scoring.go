@@ -128,7 +128,7 @@ func PrintSolutionScoring(solution Solution) {
 		rawScore, weightedScore := runCriterion(criterion, teams)
 		totalScore += weightedScore
 		newLog.Info(
-			"Balancing %s. Weighted score %f. Raw score %f (worst case %f). Running total: %f\n",
+			"Balancing %s. Weighted score %.02f. Raw score %.02f (worst case %.02f). Running total: %.02f",
 			criterion.name, weightedScore, rawScore, criterion.worstCase, totalScore)
 	}
 }
