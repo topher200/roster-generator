@@ -161,9 +161,12 @@ func performRun(
 //  - a []Player of the players from the input file
 //  - a bool which tells us whether or not we should be profiling
 //  - the number of CPUs to use for goroutines, which is manipulated by "-d"
-func parseCommandLine() ([]Player, bool, int) {
-	filenamePointer := kingpin.Arg("input-file",
+func parseCommandLine() ([]Player, []Baggage, bool, int) {
+	filenamePointer := kingpin.Arg("players",
 		"filename from which to get list of players").
+		Required().String()
+	baggagesPointer := kingpin.Arg("baggages",
+		"filename from which to get list of baggages").
 		Required().String()
 	deterministicPointer := kingpin.Flag("deterministic",
 		"makes our output deterministic by allowing the default rand.Seed").
@@ -187,14 +190,19 @@ func parseCommandLine() ([]Player, bool, int) {
 		numWorkers = 1
 	}
 
-	return ParsePlayers(*filenamePointer), *runProfilingPointer, numWorkers
+	players := ParsePlayers(*filenamePointer)
+	baggages := ParseBaggages(*baggagesPointer, players)
+	return players, baggages, *runProfilingPointer, numWorkers
 }
 
 func main() {
-	players, profilingOn, numWorkers := parseCommandLine()
+	players, baggages, profilingOn, numWorkers := parseCommandLine()
 	startTime := time.Now()
 	if len(players) == 0 {
 		panic("Could not find players")
+	}
+	if len(baggages) == 0 {
+		panic("Could not find baggages")
 	}
 
 	// Start profiler

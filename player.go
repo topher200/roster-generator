@@ -40,6 +40,20 @@ type Player struct {
 	team      uint8
 }
 
+// FindPlayer returns the first matching player in the list of players.
+//
+// Return error if none are found
+func FindPlayer(players []Player, firstName string, lastName string) (
+	Player, error) {
+	for _, player := range players {
+		if player.firstName == firstName && player.lastName == lastName {
+			return player, nil
+		}
+	}
+	return Player{}, fmt.Errorf(
+		"No player with name '%s' '%s' found", firstName, lastName)
+}
+
 // Implement fmt.Stringer for printing players
 func (player Player) String() string {
 	genderString := ""
