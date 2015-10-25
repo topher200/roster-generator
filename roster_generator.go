@@ -230,7 +230,7 @@ func main() {
 		// If we have a new best score, save and print it!
 		if topScore != parentSolutions[0].score {
 			topScore = parentSolutions[0].score
-			newLog.Info("New top score! Run number ", i, "Score:", topScore)
+			newLog.Info("New top score! Run number %v. Score: %v", i, topScore)
 			PrintSolutionScoring(parentSolutions[0])
 		}
 
@@ -247,5 +247,5 @@ func main() {
 	newLog.Info("Top score is %f, solution: %v\n", topSolution, topSolution)
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
-	newLog.Info("Program runtime:", time.Since(startTime).String())
+	newLog.Debug("Program runtime: %v", time.Since(startTime).String())
 }
