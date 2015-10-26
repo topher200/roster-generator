@@ -43,17 +43,21 @@ type Player struct {
 	baggage Name
 }
 
+func HasBaggage(player Player) bool {
+	return player.baggage != Name{}
+}
+
 // FindPlayer returns the first matching player in the list of players.
 //
 // Return error if none are found
 func FindPlayer(players []Player, name Name) (
-	Player, error) {
-	for _, player := range players {
+	*Player, error) {
+	for i, player := range players {
 		if player.name == name {
-			return player, nil
+			return &players[i], nil
 		}
 	}
-	return Player{}, fmt.Errorf(
+	return &Player{}, fmt.Errorf(
 		"No player with name '%s' found", name)
 }
 

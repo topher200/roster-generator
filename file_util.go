@@ -61,13 +61,14 @@ func ParseBaggages(inputFilename string, players []Player) {
 	baggagesCsvLines, err := baggagesCsv.ReadAll()
 	baseutil.Check(err)
 	for _, baggage := range baggagesCsvLines {
-		player1, err := FindPlayer(players, Name{baggage[0], baggage[1]})
+		playerPointer, err := FindPlayer(players, Name{baggage[0], baggage[1]})
 		baseutil.Check(err)
-		if (player1.baggage != Name{}) {
-			newLog.Panicf(
-				"Player %v already has baggage %v", player1, player1.baggage)
+		if HasBaggage(*playerPointer) {
+			newLog.Panicf("Player %v already has baggage %v",
+				*playerPointer, playerPointer.baggage)
 		}
-		player1.baggage = Name{baggage[2], baggage[3]}
-		newLog.Info("Found baggage of %v for %v", player1.baggage, player1)
+		playerPointer.baggage = Name{baggage[2], baggage[3]}
+		newLog.Info("Found baggage of %v for %v",
+			playerPointer.baggage, playerPointer)
 	}
 }
