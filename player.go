@@ -32,26 +32,28 @@ func IsFemale(player Player) bool {
 	return player.gender == Female
 }
 
+type Name struct {
+	firstName, lastName string
+}
 type Player struct {
-	firstName string
-	lastName  string
-	rating    float32
-	gender    Gender
-	team      uint8
+	name   Name
+	rating float32
+	gender Gender
+	team   uint8
 }
 
 // FindPlayer returns the first matching player in the list of players.
 //
 // Return error if none are found
-func FindPlayer(players []Player, firstName string, lastName string) (
+func FindPlayer(players []Player, name Name) (
 	Player, error) {
 	for _, player := range players {
-		if player.firstName == firstName && player.lastName == lastName {
+		if player.name == name {
 			return player, nil
 		}
 	}
 	return Player{}, fmt.Errorf(
-		"No player with name '%s' '%s' found", firstName, lastName)
+		"No player with name '%s' found", name)
 }
 
 // Implement fmt.Stringer for printing players
@@ -63,8 +65,8 @@ func (player Player) String() string {
 	case Female:
 		genderString = "F"
 	}
-	return fmt.Sprintf("%v %v,\t%v,\trating: %v",
-		player.firstName, player.lastName, genderString, player.rating)
+	return fmt.Sprintf("%v,\t%v,\trating: %v",
+		player.name, genderString, player.rating)
 }
 
 // Implement sorting for []Player based on rating

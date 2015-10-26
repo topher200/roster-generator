@@ -39,7 +39,7 @@ func ParsePlayers(inputFilename string) []Player {
 		rating, err := strconv.ParseFloat(player[33], 32)
 		baseutil.Check(err)
 		players[i] = Player{
-			firstName, lastName, float32(rating), gender, uint8(0)}
+			Name{firstName, lastName}, float32(rating), gender, uint8(0)}
 	}
 	return players
 }
@@ -65,9 +65,9 @@ func ParseBaggages(inputFilename string, players []Player) []Baggage {
 	baseutil.Check(err)
 	baggages := make([]Baggage, len(baggagesCsvLines))
 	for i, baggage := range baggagesCsvLines {
-		player1, err := FindPlayer(players, baggage[0], baggage[1])
+		player1, err := FindPlayer(players, Name{baggage[0], baggage[1]})
 		baseutil.Check(err)
-		player2, err := FindPlayer(players, baggage[2], baggage[3])
+		player2, err := FindPlayer(players, Name{baggage[2], baggage[3]})
 		baseutil.Check(err)
 		baggages[i] = Baggage{player1, player2}
 	}

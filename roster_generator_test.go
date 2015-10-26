@@ -10,8 +10,8 @@ func TestSplitIntoTeams(t *testing.T) {
 	// todo test remove 2
 	players := make([]Player, 2)
 
-	players[0] = Player{"Player", "Team 1", 100, Male, 1}
-	players[1] = Player{"Player", "Team 2", 100, Male, 2}
+	players[0] = Player{Name{"Team 1", "Player"}, 100, Male, 1}
+	players[1] = Player{Name{"Team 2", "Player"}, 100, Male, 2}
 
 	teams := splitIntoTeams(players)
 
