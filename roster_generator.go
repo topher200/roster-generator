@@ -220,7 +220,7 @@ func main() {
 
 	// Use the random starting solutions to determine the worst case for each of
 	// our criteria
-	PopulateExtremeCases(parentSolutions)
+	PopulateWorstCases(parentSolutions)
 
 	// Start our worker goroutines
 	tasks := make(chan workerTask, numSolutionsPerRun)

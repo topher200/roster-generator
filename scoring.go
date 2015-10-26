@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
 	"text/tabwriter"
 
@@ -17,23 +16,22 @@ type criterion struct {
 	calculate criterionCalculationFunction // how to calculate the raw score
 	filter    PlayerFilter                 // cull down to players that match
 	weight    int                          // how much weight to give this score
-	// best and worst cases are calculated at runtime to be the extreme scores we
-	// can see this criterion getting
+	// worstCase is calculated at runtime to be the absolute worst score we can
+	// see this criterion getting
 	worstCase Score
-	bestCase  Score
 }
 
 var criteriaToScore = [...]criterion{
-	criterion{"number of players", playerCountDifference, nil, 10, 0, math.MaxFloat64},
-	criterion{"number of males", playerCountDifference, IsMale, 9, 0, math.MaxFloat64},
-	criterion{"number of females", playerCountDifference, IsFemale, 9, 0, math.MaxFloat64},
-	criterion{"average rating players", ratingDifference, nil, 8, 0, math.MaxFloat64},
-	criterion{"average rating males", ratingDifference, IsMale, 7, 0, math.MaxFloat64},
-	criterion{"average rating females", ratingDifference, IsFemale, 7, 0, math.MaxFloat64},
-	criterion{"std dev of team player ratings", ratingStdDev, nil, 6, 0, math.MaxFloat64},
-	criterion{"std dev of team male ratings", ratingStdDev, IsMale, 5, 0, math.MaxFloat64},
-	criterion{"std dev of team female ratings", ratingStdDev, IsFemale, 5, 0, math.MaxFloat64},
-	criterion{"matching baggages", baggagesMatch, nil, 2, 0, math.MaxFloat64},
+	criterion{"number of players", playerCountDifference, nil, 10, 0},
+	criterion{"number of males", playerCountDifference, IsMale, 9, 0},
+	criterion{"number of females", playerCountDifference, IsFemale, 9, 0},
+	criterion{"average rating players", ratingDifference, nil, 8, 0},
+	criterion{"average rating males", ratingDifference, IsMale, 7, 0},
+	criterion{"average rating females", ratingDifference, IsFemale, 7, 0},
+	criterion{"std dev of team player ratings", ratingStdDev, nil, 6, 0},
+	criterion{"std dev of team male ratings", ratingStdDev, IsMale, 5, 0},
+	criterion{"std dev of team female ratings", ratingStdDev, IsFemale, 5, 0},
+	criterion{"matching baggages", baggagesMatch, nil, 2, 0},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -120,26 +118,16 @@ func maxScore(a, b Score) Score {
 	}
 }
 
-func minScore(a, b Score) Score {
-	if a < b {
-		return a
-	} else {
-		return b
-	}
-}
-
-// PopulateExtremeCases calculates the best and worst case of each criterion.
+// PopulateWorstCases calculates the worst case of each criterion.
 //
-// The function has the side effect of filling in the bestCase and worstCase
-// params for each criterion in criteriaToScore.
-func PopulateExtremeCases(solutions []Solution) {
+// The function has the side effect of filling in the worstCase param for each
+// criterion in criteriaToScore.
+func PopulateWorstCases(solutions []Solution) {
 	for _, solution := range solutions {
 		_, rawScores := ScoreSolution(solution.players)
 		for i, criterion := range criteriaToScore {
 			criteriaToScore[i].worstCase = maxScore(
 				criterion.worstCase, rawScores[i])
-			criteriaToScore[i].bestCase = minScore(
-				criterion.bestCase, rawScores[i])
 		}
 	}
 }
@@ -170,9 +158,9 @@ func PrintSolutionScoring(solution Solution) {
 		totalScore += weightedScore
 		fmt.Fprintf(
 			writer,
-			"Balancing %s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\t[best case %.02f, raw score %0.2f, worst case %.02f]\tRunning total: %.02f\n",
+			"Balancing %s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\traw score %0.2f, worst case %.02f)\tRunning total: %.02f\n",
 			criterion.name, weightedScore, normalizedScore, criterion.weight,
-			criterion.bestCase, rawScore, criterion.worstCase, totalScore)
+			rawScore, criterion.worstCase, totalScore)
 	}
 	writer.Flush()
 }
