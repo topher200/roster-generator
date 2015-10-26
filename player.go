@@ -36,10 +36,11 @@ type Name struct {
 	firstName, lastName string
 }
 type Player struct {
-	name   Name
-	rating float32
-	gender Gender
-	team   uint8
+	name    Name
+	rating  float32
+	gender  Gender
+	team    uint8
+	baggage Name
 }
 
 // FindPlayer returns the first matching player in the list of players.

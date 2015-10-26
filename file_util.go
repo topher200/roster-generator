@@ -39,16 +39,13 @@ func ParsePlayers(inputFilename string) []Player {
 		rating, err := strconv.ParseFloat(player[33], 32)
 		baseutil.Check(err)
 		players[i] = Player{
-			Name{firstName, lastName}, float32(rating), gender, uint8(0)}
+			Name{firstName, lastName}, float32(rating), gender, uint8(0), Name{}}
 	}
 	return players
 }
 
-type Baggage struct {
-	player1, player2 Player
-}
-
-func ParseBaggages(inputFilename string, players []Player) []Baggage {
+// ParseBaggages has the side effect of setting the .baggage for all Players
+func ParseBaggages(inputFilename string, players []Player) {
 	// Read in our csv. Throw away the header. We expect this format:
 	// Field 0: Player 1 First Name
 	// Field 1: Player 1 Last Name
@@ -63,14 +60,14 @@ func ParseBaggages(inputFilename string, players []Player) []Baggage {
 
 	baggagesCsvLines, err := baggagesCsv.ReadAll()
 	baseutil.Check(err)
-	baggages := make([]Baggage, len(baggagesCsvLines))
-	for i, baggage := range baggagesCsvLines {
+	for _, baggage := range baggagesCsvLines {
 		player1, err := FindPlayer(players, Name{baggage[0], baggage[1]})
 		baseutil.Check(err)
-		player2, err := FindPlayer(players, Name{baggage[2], baggage[3]})
-		baseutil.Check(err)
-		baggages[i] = Baggage{player1, player2}
+		if (player1.baggage != Name{}) {
+			newLog.Panicf(
+				"Player %v already has baggage %v", player1, player1.baggage)
+		}
+		player1.baggage = Name{baggage[2], baggage[3]}
+		newLog.Info("Found baggage of %v for %v", player1.baggage, player1)
 	}
-	newLog.Info("baggages: %v", baggages)
-	return baggages
 }
