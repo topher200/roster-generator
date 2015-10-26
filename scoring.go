@@ -27,6 +27,7 @@ var criteriaToScore = [...]criterion{
 	criterion{"number of females", playerCountDifference, IsFemale, 9, 0},
 	criterion{"average rating", ratingDifference, nil, 8, 0},
 	criterion{"std dev of team ratings", ratingStdDev, nil, 5, 0},
+	criterion{"matching baggages", baggagesMatch, nil, 2, 0},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -55,6 +56,23 @@ func ratingStdDev(teams []Team) Score {
 		teamRatingsStdDev[i] = stats.StatsSampleStandardDeviation(playerRatings)
 	}
 	return Score(stats.StatsSampleStandardDeviation(teamRatingsStdDev))
+}
+
+func baggagesMatch(teams []Team) Score {
+	score := Score(0)
+	for _, team := range teams {
+		for _, player := range team.players {
+			if !HasBaggage(player) {
+				continue
+			}
+			_, err := FindPlayer(team.players, player.baggage)
+			if err != nil {
+				// Player desired a baggage, but they're not on the team
+				score += 1
+			}
+		}
+	}
+	return score
 }
 
 func AverageRating(team Team) Score {
