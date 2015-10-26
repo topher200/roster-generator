@@ -43,7 +43,7 @@ type Player struct {
 	baggage Name
 }
 
-func HasBaggage(player Player) bool {
+func (player Player) HasBaggage() bool {
 	return player.baggage != Name{}
 }
 

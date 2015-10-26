@@ -66,7 +66,7 @@ func baggagesMatch(teams []Team) Score {
 	score := Score(0)
 	for _, team := range teams {
 		for _, player := range team.players {
-			if !HasBaggage(player) {
+			if !player.HasBaggage() {
 				continue
 			}
 			_, err := FindPlayer(team.players, player.baggage)
