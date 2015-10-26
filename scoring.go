@@ -25,8 +25,12 @@ var criteriaToScore = [...]criterion{
 	criterion{"number of players", playerCountDifference, nil, 10, 0},
 	criterion{"number of males", playerCountDifference, IsMale, 9, 0},
 	criterion{"number of females", playerCountDifference, IsFemale, 9, 0},
-	criterion{"average rating", ratingDifference, nil, 8, 0},
-	criterion{"std dev of team ratings", ratingStdDev, nil, 5, 0},
+	criterion{"average rating players", ratingDifference, nil, 8, 0},
+	criterion{"average rating males", ratingDifference, IsMale, 7, 0},
+	criterion{"average rating females", ratingDifference, IsFemale, 7, 0},
+	criterion{"std dev of team player ratings", ratingStdDev, nil, 6, 0},
+	criterion{"std dev of team male ratings", ratingStdDev, IsMale, 5, 0},
+	criterion{"std dev of team female ratings", ratingStdDev, IsFemale, 5, 0},
 	criterion{"matching baggages", baggagesMatch, nil, 2, 0},
 }
 
