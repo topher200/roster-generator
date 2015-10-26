@@ -19,10 +19,10 @@ func ParsePlayers(inputFilename string) []Player {
 	// Read in our csv. Throw away the header. Because we're getting our input
 	// directly from the league signup form, we expect the input to be shaped like
 	// this:
-	// Field 1: First name
-	// Field 2: Last name
-	// Field 6: "Male" or "Female"
-	// Field 33: Rating
+	// Field 2: First name
+	// Field 3: Last name
+	// Field 7: "Male" or "Female"
+	// Field 36: Rating
 	playersCsv := csv.NewReader(file)
 	_, err = playersCsv.Read()
 	baseutil.Check(err)
@@ -32,11 +32,11 @@ func ParsePlayers(inputFilename string) []Player {
 	players := make([]Player, len(playersCsvLines))
 	baseutil.Check(err)
 	for i, player := range playersCsvLines {
-		firstName := player[1]
-		lastName := player[2]
-		gender, err := StringToGender(player[6])
+		firstName := player[2]
+		lastName := player[3]
+		gender, err := StringToGender(player[7])
 		baseutil.Check(err)
-		rating, err := strconv.ParseFloat(player[33], 32)
+		rating, err := strconv.ParseFloat(player[36], 32)
 		baseutil.Check(err)
 		players[i] = Player{
 			Name{firstName, lastName}, float32(rating), gender, uint8(0), Name{}}
