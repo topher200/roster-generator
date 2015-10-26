@@ -69,6 +69,6 @@ func ParseBaggages(inputFilename string, players []Player) {
 		}
 		playerPointer.baggage = Name{baggage[2], baggage[3]}
 		newLog.Info("Found baggage of %v for %v",
-			playerPointer.baggage, playerPointer)
+			playerPointer.baggage, playerPointer.String())
 	}
 }
