@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"math/rand"
 	"os"
 	"runtime"
@@ -72,22 +73,55 @@ func randomizeTeams(players []Player) {
 	}
 }
 
-func PrintTeams(solution Solution) {
-	teams := splitIntoTeams(solution.players)
-	for i, team := range teams {
-		fmt.Printf("Team #%d, %d players. Average rating: %.2f\n",
-			i, len(teams[i].players), AverageRating(team))
-		writer := new(tabwriter.Writer)
-		writer.Init(os.Stdout, 0, 0, 1, ' ', 0)
-		for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
-			filteredPlayers := Filter(team.players, filterFunc)
-			sort.Sort(sort.Reverse(ByRating(filteredPlayers)))
-			for _, player := range filteredPlayers {
-				fmt.Fprintln(writer, player)
+func maxNumberOfPlayersPerTeam(teams []Team) int {
+	maxPlayers := 0
+	for i := 0; i < math.MaxInt16; i++ {
+		works := false
+		for _, team := range teams {
+			if len(team.players) >= maxPlayers {
+				works = true
 			}
 		}
-		writer.Flush()
+		if !works {
+			break
+		}
+		maxPlayers += 1
 	}
+	return maxPlayers
+}
+
+func PrintTeams(solution Solution) {
+	writer := new(tabwriter.Writer)
+	writer.Init(os.Stdout, 0, 0, 0, ' ', 0)
+	for _, filterFunc := range []PlayerFilter{IsMale, IsFemale} {
+		// Print the rating for each team
+		filteredPlayers := Filter(solution.players, filterFunc)
+		sort.Sort(sort.Reverse(ByRating(filteredPlayers)))
+		teams := splitIntoTeams(filteredPlayers)
+		string := ""
+		for _, team := range teams {
+			string += fmt.Sprintf("|Average: %.02f\t", AverageRating(team))
+		}
+		string += "|"
+		fmt.Fprintln(writer, string)
+
+		// Print the players for each team
+		numLoops := maxNumberOfPlayersPerTeam(teams)
+		for i := 0; i < numLoops; i++ {
+			string := ""
+			for _, team := range teams {
+				if len(team.players) > i {
+					string += fmt.Sprintf(
+						"|%.02f %s\t", team.players[i].rating, team.players[i].name)
+				} else {
+					string += "|\t"
+				}
+			}
+			string += "|"
+			fmt.Fprintln(writer, string)
+		}
+	}
+	writer.Flush()
 }
 
 // Mutate the solution by moving random players to random teams, sometimes.
