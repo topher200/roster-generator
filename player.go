@@ -63,15 +63,8 @@ func FindPlayer(players []Player, name Name) (
 
 // Implement fmt.Stringer for printing players
 func (player Player) String() string {
-	genderString := ""
-	switch player.gender {
-	case Male:
-		genderString = "M"
-	case Female:
-		genderString = "F"
-	}
-	return fmt.Sprintf("%v,\t%v,\trating: %v",
-		player.name, genderString, player.rating)
+	return fmt.Sprintf("%.02f %s %s",
+		player.rating, player.name.firstName, player.name.lastName)
 }
 
 // Implement sorting for []Player based on rating

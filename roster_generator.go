@@ -111,8 +111,7 @@ func PrintTeams(solution Solution) {
 			string := ""
 			for _, team := range teams {
 				if len(team.players) > i {
-					string += fmt.Sprintf(
-						"|%.02f %s\t", team.players[i].rating, team.players[i].name)
+					string += team.players[i].String()
 				} else {
 					string += "|\t"
 				}
