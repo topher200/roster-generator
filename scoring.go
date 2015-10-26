@@ -93,17 +93,17 @@ func Filter(players []Player, filter PlayerFilter) (filteredPlayers []Player) {
 }
 
 // runCriterion by filtering the input teams and running the criterion function
-func runCriterion(
-	c criterion, teams []Team) (rawScore Score, weightedScore Score) {
+func runCriterion(c criterion, teams []Team) (
+	rawScore Score, normalizedScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, _ := range teams {
 		filteredTeams[i].players = Filter(teams[i].players, c.filter)
 	}
 
 	rawScore = c.calculate(filteredTeams)
-	// We normalize our weighted scores based on the worst case scenario
-	weightedScore = (rawScore / c.worstCase) * Score(c.weight)
-	return rawScore, weightedScore
+	normalizedScore = rawScore / c.worstCase
+	weightedScore = normalizedScore * Score(c.weight)
+	return rawScore, normalizedScore, weightedScore
 }
 
 func maxScore(a, b Score) Score {
@@ -136,7 +136,7 @@ func ScoreSolution(players []Player) (totalScore Score, rawScores []Score) {
 	teams := splitIntoTeams(players)
 	rawScores = make([]Score, len(criteriaToScore))
 	for i, criterion := range criteriaToScore {
-		rawScore, weightedScore := runCriterion(criterion, teams)
+		rawScore, _, weightedScore := runCriterion(criterion, teams)
 		rawScores[i] = rawScore
 		totalScore += weightedScore
 	}
@@ -149,12 +149,14 @@ func PrintSolutionScoring(solution Solution) {
 	writer := new(tabwriter.Writer)
 	writer.Init(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, criterion := range criteriaToScore {
-		rawScore, weightedScore := runCriterion(criterion, teams)
+		rawScore, normalizedScore, weightedScore := runCriterion(
+			criterion, teams)
 		totalScore += weightedScore
 		fmt.Fprintf(
 			writer,
-			"Balancing %s.\tWeighted score %.02f.\tRaw score %.02f (worst case %.02f).\tRunning total: %.02f\n",
-			criterion.name, weightedScore, rawScore, criterion.worstCase, totalScore)
+			"Balancing %s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\traw score %0.2f, worst case %.02f)\tRunning total: %.02f\n",
+			criterion.name, weightedScore, normalizedScore, criterion.weight,
+			rawScore, criterion.worstCase, totalScore)
 	}
 	writer.Flush()
 }
