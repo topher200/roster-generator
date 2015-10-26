@@ -158,7 +158,7 @@ func PrintSolutionScoring(solution Solution) {
 		totalScore += weightedScore
 		fmt.Fprintf(
 			writer,
-			"Balancing %s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\traw score %0.2f, worst case %.02f)\tRunning total: %.02f\n",
+			"Balancing %s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\t(raw score %0.2f, worst case %.02f)\tRunning total: %.02f\n",
 			criterion.name, weightedScore, normalizedScore, criterion.weight,
 			rawScore, criterion.worstCase, totalScore)
 	}
