@@ -206,13 +206,17 @@ func parseCommandLine() ([]Player, bool, int) {
 		Short('d').Bool()
 	runProfilingPointer := kingpin.Flag("profiling",
 		"output profiling stats when true").Short('p').Bool()
+	verbosePointer := kingpin.Flag("verbose",
+		"verbose output").Short('v').Bool()
 	kingpin.Parse()
 
 	// Set up logging
-	logBackend := logging.NewLogBackend(os.Stdout, "", 0)
-	logBackendLeveled := logging.AddModuleLevel(logBackend)
-	logBackendLeveled.SetLevel(logging.INFO, "")
-	logging.SetBackend(logBackend)
+	logging.SetBackend(logging.NewLogBackend(os.Stdout, "", 0))
+	if *verbosePointer {
+		logging.SetLevel(logging.DEBUG, "")
+	} else {
+		logging.SetLevel(logging.INFO, "")
+	}
 
 	// To run deterministically, we use the default seed and only one goroutine
 	numWorkers := runtime.NumCPU()
@@ -268,8 +272,10 @@ func main() {
 		// If we have a new best score, save and print it!
 		if topScore != parentSolutions[0].score {
 			topScore = parentSolutions[0].score
-			newLog.Info("New top score! Run number %d. Score: %.02f", i, topScore)
-			PrintSolutionScoring(parentSolutions[0])
+			if newLog.IsEnabledFor(logging.DEBUG) {
+				newLog.Info("New top score! Run number %d. Score: %.02f", i, topScore)
+				PrintSolutionScoring(parentSolutions[0])
+			}
 		}
 
 		// Create new solutions, and save the best ones
@@ -282,7 +288,6 @@ func main() {
 
 	// Display our solution to the user
 	topSolution := parentSolutions[0]
-	newLog.Info("Top score is %.02f, solution: %v", topSolution.score, topSolution)
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
 	newLog.Debug("Program runtime: %.02fs", time.Since(startTime).Seconds())
