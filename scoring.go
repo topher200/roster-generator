@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"text/tabwriter"
 
@@ -53,6 +54,10 @@ func ratingDifference(teams []Team) Score {
 func ratingStdDev(teams []Team) Score {
 	teamRatingsStdDev := make([]float64, numTeams)
 	for i, team := range teams {
+		if len(team.players) < 2 {
+			teamRatingsStdDev[i] = 0
+			continue
+		}
 		playerRatings := make([]float64, len(team.players))
 		for j, player := range team.players {
 			playerRatings[j] = float64(player.rating)
@@ -80,6 +85,9 @@ func baggagesMatch(teams []Team) Score {
 }
 
 func AverageRating(team Team) Score {
+	if len(team.players) == 0 {
+		return Score(0)
+	}
 	sum := float32(0.0)
 	for _, player := range team.players {
 		sum += player.rating
@@ -105,7 +113,11 @@ func runCriterion(c criterion, teams []Team) (
 	}
 
 	rawScore = c.calculate(filteredTeams)
-	normalizedScore = rawScore / c.worstCase
+	if c.worstCase != 0 {
+		normalizedScore = rawScore / c.worstCase
+	} else {
+		normalizedScore = rawScore
+	}
 	weightedScore = normalizedScore * Score(c.weight)
 	return rawScore, normalizedScore, weightedScore
 }
@@ -126,6 +138,9 @@ func PopulateWorstCases(solutions []Solution) {
 	for _, solution := range solutions {
 		_, rawScores := ScoreSolution(solution.players)
 		for i, criterion := range criteriaToScore {
+			if math.IsNaN(float64(rawScores[i])) {
+				continue
+			}
 			criteriaToScore[i].worstCase = maxScore(
 				criterion.worstCase, rawScores[i])
 		}
