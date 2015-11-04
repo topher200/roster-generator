@@ -11,7 +11,6 @@ import (
 )
 
 type criterionCalculationFunction func(teams []Team) Score
-type PlayerFilter func(player Player) bool
 type criterion struct {
 	name      string                       // human readable name
 	calculate criterionCalculationFunction // how to calculate the raw score
@@ -93,15 +92,6 @@ func AverageRating(team Team) Score {
 		sum += player.rating
 	}
 	return Score(sum / float32(len(team.players)))
-}
-
-func Filter(players []Player, filter PlayerFilter) (filteredPlayers []Player) {
-	for _, player := range players {
-		if filter == nil || filter(player) {
-			filteredPlayers = append(filteredPlayers, player)
-		}
-	}
-	return
 }
 
 // runCriterion by filtering the input teams and running the criterion function

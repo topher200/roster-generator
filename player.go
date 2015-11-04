@@ -79,3 +79,14 @@ func (a ByRating) Swap(i, j int) {
 func (a ByRating) Less(i, j int) bool {
 	return a[i].rating < a[j].rating
 }
+
+type PlayerFilter func(player Player) bool
+
+func Filter(players []Player, filter PlayerFilter) (filteredPlayers []Player) {
+	for _, player := range players {
+		if filter == nil || filter(player) {
+			filteredPlayers = append(filteredPlayers, player)
+		}
+	}
+	return
+}
