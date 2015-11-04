@@ -29,8 +29,8 @@ func ParsePlayers(inputFilename string) []Player {
 
 	// Read in all players
 	playersCsvLines, err := playersCsv.ReadAll()
-	players := make([]Player, len(playersCsvLines))
 	baseutil.Check(err)
+	players := make([]Player, len(playersCsvLines))
 	for i, player := range playersCsvLines {
 		firstName := player[3]
 		lastName := player[4]
