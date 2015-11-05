@@ -24,19 +24,30 @@ func ParsePlayers(inputFilename string) []Player {
 	// Field 8: "Male" or "Female"
 	// Field 38: Rating
 	playersCsv := csv.NewReader(file)
-	_, err = playersCsv.Read()
+	columnNames, err := playersCsv.Read()
 	baseutil.Check(err)
 
 	// Read in all players
 	playersCsvLines, err := playersCsv.ReadAll()
 	baseutil.Check(err)
 	players := make([]Player, len(playersCsvLines))
-	for i, player := range playersCsvLines {
-		firstName := player[3]
-		lastName := player[4]
-		gender, err := StringToGender(player[8])
+	rows := make([]map[string]string, len(playersCsvLines))
+	for rowNum, row := range playersCsvLines {
+		rows[rowNum] = make(map[string]string)
+		for columnNum, value := range row {
+			if value == "" {
+				continue
+			}
+			rows[rowNum][columnNames[columnNum]] = value
+		}
+	}
+
+	for i, row := range rows {
+		firstName := row["firstname"]
+		lastName := row["lastname"]
+		gender, err := StringToGender(row["gender"])
 		baseutil.Check(err)
-		rating, err := strconv.ParseFloat(player[38], 32)
+		rating, err := strconv.ParseFloat(row["rating"], 32)
 		baseutil.Check(err)
 		players[i] = Player{
 			Name{firstName, lastName}, float32(rating), gender, uint8(0), Name{}}
