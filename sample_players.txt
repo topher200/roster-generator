@@ -1,32 +1,32 @@
-player,rating,gender
-Young Yother,82.8,f
-Nelson Nodal,46.1,f
-Lavada Larrimore,43.8,f
-Reatha Renshaw,50,f
-Stefanie Seal,65.6,f
-Jona Jeffries,64.8,f
-Sari Saechao,51.6,f
-Rena Robertson,43.8,f
-Gema Gusman,30.5,f
-Stuart Seymore,89.1,m
-Floy Ferretti,82,m
-Arnoldo Alvord,70.3,m
-Gertude Gano,69.5,m
-Nick Niven,68,m
-Ruthe Renfroe,65.6,m
-Earnestine Engel,59.4,m
-Adele Alas,57.8,m
-Merrie Mcgahan,52.3,m
-Waneta Wittman,44.5,m
-Della Dwyer,32,m
-Isaias Ingham,78.9,m
-Londa Leiva,78.1,m
-Filiberto Fiorenza,75,m
-Lashunda Lambright,68.8,m
-Chris Casebolt,67.2,m
-Marianne Matherly,60.9,m
-Camille Chiodo,60.2,m
-Dann Dunne,53.1,m
-Ela Edberg,50.8,m
-Gracia Gregerson,46.9,m
-Yessenia Yazzie,31.3,m
+firstname,lastname,rating,gender
+Young,Yother,82.8,Female
+Nelson,Nodal,46.1,Female
+Lavada,Larrimore,43.8,Female
+Reatha,Renshaw,50,Female
+Stefanie,Seal,65.6,Female
+Jona,Jeffries,64.8,Female
+Sari,Saechao,51.6,Female
+Rena,Robertson,43.8,Female
+Gema,Gusman,30.5,Female
+Stuart,Seymore,89.1,Male
+Floy,Ferretti,82,Male
+Arnoldo,Alvord,70.3,Male
+Gertude,Gano,69.5,Male
+Nick,Niven,68,Male
+Ruthe,Renfroe,65.6,Male
+Earnestine,Engel,59.4,Male
+Adele,Alas,57.8,Male
+Merrie,Mcgahan,52.3,Male
+Waneta,Wittman,44.5,Male
+Della,Dwyer,32,Male
+Isaias,Ingham,78.9,Male
+Londa,Leiva,78.1,Male
+Filiberto,Fiorenza,75,Male
+Lashunda,Lambright,68.8,Male
+Chris,Casebolt,67.2,Male
+Marianne,Matherly,60.9,Male
+Camille,Chiodo,60.2,Male
+Dann,Dunne,53.1,Male
+Ela,Edberg,50.8,Male
+Gracia,Gregerson,46.9,Male
+Yessenia,Yazzie,31.3,Male
