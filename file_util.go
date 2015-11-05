@@ -9,7 +9,7 @@ import (
 )
 
 func ParsePlayers(inputFilename string) []Player {
-	mappedRows := baseutil.Parse(inputFilename)
+	mappedRows := baseutil.MapReader(inputFilename)
 	players := make([]Player, len(mappedRows))
 	for i, row := range mappedRows {
 		firstName := row["firstname"]
@@ -26,7 +26,7 @@ func ParsePlayers(inputFilename string) []Player {
 
 // ParseBaggages has the side effect of setting the .baggage for all Players
 func ParseBaggages(inputFilename string, players []Player) {
-	for _, baggage := range baseutil.Parse(inputFilename) {
+	for _, baggage := range baseutil.MapReader(inputFilename) {
 		playerPointer, err := FindPlayer(players, Name{baggage["firstname1"], baggage["lastname1"]})
 		baseutil.Check(err)
 		if playerPointer.HasBaggage() {
