@@ -1,32 +1,32 @@
-,,,firstname,lastname,,,,rating,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,gender
-,,,Young,Yother,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,82.8
-,,,Nelson,Nodal,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,46.1
-,,,Lavada,Larrimore,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,43.8
-,,,Reatha,Renshaw,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,50.0
-,,,Stefanie,Seal,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,65.6
-,,,Jona,Jeffries,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,64.8
-,,,Sari,Saechao,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,51.6
-,,,Rena,Robertson,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,43.8
-,,,Gema,Gusman,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,30.5
-,,,Stuart,Seymore,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,89.1
-,,,Floy,Ferretti,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,82.1
-,,,Arnoldo,Alvord,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,70.3
-,,,Gertude,Gano,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,69.5
-,,,Nick,Niven,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,68.0
-,,,Ruthe,Renfroe,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,65.6
-,,,Earnestine,Engel,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,59.4
-,,,Adele,Alas,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,57.8
-,,,Merrie,Mcgahan,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,52.3
-,,,Waneta,Wittman,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,44.5
-,,,Della,Dwyer,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,32.0
-,,,Isaias,Ingham,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,78.9
-,,,Londa,Leiva,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,78.1
-,,,Filiberto,Fiorenza,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,75.0
-,,,Lashunda,Lambright,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,68.8
-,,,Chris,Casebolt,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,67.2
-,,,Marianne,Matherly,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,60.9
-,,,Camille,Chiodo,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,60.2
-,,,Dann,Dunne,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,53.1
-,,,Ela,Edberg,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,50.8
-,,,Gracia,Gregerson,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,46.9
-,,,Yessenia,Yazzie,,,,Female,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,31.3
+player,rating,gender
+Young Yother,82.8,f
+Nelson Nodal,46.1,f
+Lavada Larrimore,43.8,f
+Reatha Renshaw,50,f
+Stefanie Seal,65.6,f
+Jona Jeffries,64.8,f
+Sari Saechao,51.6,f
+Rena Robertson,43.8,f
+Gema Gusman,30.5,f
+Stuart Seymore,89.1,m
+Floy Ferretti,82,m
+Arnoldo Alvord,70.3,m
+Gertude Gano,69.5,m
+Nick Niven,68,m
+Ruthe Renfroe,65.6,m
+Earnestine Engel,59.4,m
+Adele Alas,57.8,m
+Merrie Mcgahan,52.3,m
+Waneta Wittman,44.5,m
+Della Dwyer,32,m
+Isaias Ingham,78.9,m
+Londa Leiva,78.1,m
+Filiberto Fiorenza,75,m
+Lashunda Lambright,68.8,m
+Chris Casebolt,67.2,m
+Marianne Matherly,60.9,m
+Camille Chiodo,60.2,m
+Dann Dunne,53.1,m
+Ela Edberg,50.8,m
+Gracia Gregerson,46.9,m
+Yessenia Yazzie,31.3,m
