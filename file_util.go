@@ -11,38 +11,9 @@ import (
 )
 
 func ParsePlayers(inputFilename string) []Player {
-	// Open our input Players file
-	file, err := os.Open(inputFilename)
-	baseutil.Check(err)
-	defer file.Close()
-
-	// Read in our csv. Throw away the header. Because we're getting our input
-	// directly from the league signup form, we expect the input to be shaped like
-	// this:
-	// Field 3: First name
-	// Field 4: Last name
-	// Field 8: "Male" or "Female"
-	// Field 38: Rating
-	playersCsv := csv.NewReader(file)
-	columnNames, err := playersCsv.Read()
-	baseutil.Check(err)
-
-	// Read in all players
-	playersCsvLines, err := playersCsv.ReadAll()
-	baseutil.Check(err)
-	players := make([]Player, len(playersCsvLines))
-	rows := make([]map[string]string, len(playersCsvLines))
-	for rowNum, row := range playersCsvLines {
-		rows[rowNum] = make(map[string]string)
-		for columnNum, value := range row {
-			if value == "" {
-				continue
-			}
-			rows[rowNum][columnNames[columnNum]] = value
-		}
-	}
-
-	for i, row := range rows {
+	mappedRows := baseutil.Parse(inputFilename)
+	players := make([]Player, len(mappedRows))
+	for i, row := range mappedRows {
 		firstName := row["firstname"]
 		lastName := row["lastname"]
 		gender, err := StringToGender(row["gender"])
