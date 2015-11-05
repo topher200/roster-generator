@@ -3,8 +3,6 @@
 package main
 
 import (
-	"encoding/csv"
-	"os"
 	"strconv"
 
 	"github.com/topher200/baseutil"
@@ -28,28 +26,14 @@ func ParsePlayers(inputFilename string) []Player {
 
 // ParseBaggages has the side effect of setting the .baggage for all Players
 func ParseBaggages(inputFilename string, players []Player) {
-	// Read in our csv. Throw away the header. We expect this format:
-	// Field 0: Player 1 First Name
-	// Field 1: Player 1 Last Name
-	// Field 2: Player 2 First Name
-	// Field 3: Player 2 Last Name
-	file, err := os.Open(inputFilename)
-	baseutil.Check(err)
-	defer file.Close()
-	baggagesCsv := csv.NewReader(file)
-	_, err = baggagesCsv.Read()
-	baseutil.Check(err)
-
-	baggagesCsvLines, err := baggagesCsv.ReadAll()
-	baseutil.Check(err)
-	for _, baggage := range baggagesCsvLines {
-		playerPointer, err := FindPlayer(players, Name{baggage[0], baggage[1]})
+	for _, baggage := range baseutil.Parse(inputFilename) {
+		playerPointer, err := FindPlayer(players, Name{baggage["firstname1"], baggage["lastname1"]})
 		baseutil.Check(err)
 		if playerPointer.HasBaggage() {
 			newLog.Panicf("Player %v already has baggage %v",
 				*playerPointer, playerPointer.baggage)
 		}
-		playerPointer.baggage = Name{baggage[2], baggage[3]}
+		playerPointer.baggage = Name{baggage["firstname2"], baggage["lastname2"]}
 		newLog.Info("Found baggage of %v for %v",
 			playerPointer.baggage, playerPointer.String())
 	}
