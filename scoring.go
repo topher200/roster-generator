@@ -17,7 +17,7 @@ type criterion struct {
 	filter    PlayerFilter                 // cull down to players that match
 	weight    int                          // how much weight to give this score
 	// worstCase is calculated at runtime to be the absolute worst score we can
-	// see this criterion getting
+	// see this criterion getting, calculated using random sampling
 	worstCase Score
 }
 
