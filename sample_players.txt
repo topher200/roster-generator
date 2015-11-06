@@ -1,4 +1,5 @@
-firstname,lastname,rating,gender
+First Name,Last Name,"Rating
+Percentage",Gender
 Young,Yother,82.8,Female
 Nelson,Nodal,46.1,Female
 Lavada,Larrimore,43.8,Female

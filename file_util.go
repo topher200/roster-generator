@@ -12,11 +12,11 @@ func ParsePlayers(inputFilename string) []Player {
 	mappedRows := baseutil.MapReader(inputFilename)
 	players := make([]Player, len(mappedRows))
 	for i, row := range mappedRows {
-		firstName := row["firstname"]
-		lastName := row["lastname"]
-		gender, err := StringToGender(row["gender"])
+		firstName := row["First Name"]
+		lastName := row["Last Name"]
+		gender, err := StringToGender(row["Gender"])
 		baseutil.Check(err)
-		rating, err := strconv.ParseFloat(row["rating"], 32)
+		rating, err := strconv.ParseFloat(row["Rating\nPercentage"], 32)
 		baseutil.Check(err)
 		players[i] = Player{
 			Name{firstName, lastName}, float32(rating), gender, uint8(0), Name{}}
