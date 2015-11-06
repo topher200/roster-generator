@@ -94,8 +94,9 @@ func AverageRating(team Team) Score {
 	return Score(sum / float32(len(team.players)))
 }
 
-// runCriterion by filtering the input teams and running the criterion function
-func runCriterion(c criterion, teams []Team) (
+// analyze criterion by filtering the input teams and running the criterion's
+// function
+func (c criterion) analyze(teams []Team) (
 	rawScore Score, normalizedScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, _ := range teams {
@@ -145,7 +146,7 @@ func ScoreSolution(players []Player) (totalScore Score, rawScores []Score) {
 	teams := splitIntoTeams(players)
 	rawScores = make([]Score, len(criteriaToScore))
 	for i, criterion := range criteriaToScore {
-		rawScore, _, weightedScore := runCriterion(criterion, teams)
+		rawScore, _, weightedScore := criterion.analyze(teams)
 		rawScores[i] = rawScore
 		totalScore += weightedScore
 	}
@@ -158,8 +159,7 @@ func PrintSolutionScoring(solution Solution) {
 	writer := new(tabwriter.Writer)
 	writer.Init(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, criterion := range criteriaToScore {
-		rawScore, normalizedScore, weightedScore := runCriterion(
-			criterion, teams)
+		rawScore, normalizedScore, weightedScore := criterion.analyze(teams)
 		totalScore += weightedScore
 		fmt.Fprintf(
 			writer,
