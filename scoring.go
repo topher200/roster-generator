@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"math"
 	"os"
-	"sort"
 	"text/tabwriter"
 
 	"github.com/GaryBoone/GoStats/stats"
@@ -16,30 +15,23 @@ type criterion struct {
 	name      string                       // human readable name
 	calculate criterionCalculationFunction // how to calculate the raw score
 	filter    PlayerFilter                 // cull down to players that match
-	// numPlayers reduces the amount of players we analyze from each team.
-	// Sometimes used to just grab the top players on the team, for example.
-	// Ignored if 0.
-	numPlayers int
-	weight     int // how much weight to give this score
+	weight    int                          // how much weight to give this score
 	// worstCase is calculated at runtime to be the absolute worst score we can
 	// see this criterion getting, calculated using random sampling
 	worstCase Score
 }
 
 var criteriaToScore = [...]criterion{
-	criterion{"matching baggages", baggagesMatch, nil, 0, 10000, 0},
-	criterion{"number of players", playerCountDifference, nil, 0, 15, 0},
-	criterion{"number of males", playerCountDifference, IsMale, 0, 12, 0},
-	criterion{"number of females", playerCountDifference, IsFemale, 0, 12, 0},
-	criterion{"average rating players", ratingDifference, nil, 0, 8, 0},
-	criterion{"average rating males", ratingDifference, IsMale, 0, 7, 0},
-	criterion{"average rating females", ratingDifference, IsFemale, 0, 7, 0},
-	criterion{"average rating top players", ratingDifference, nil, 3, 20, 0},
-	criterion{"average rating top males", ratingDifference, IsMale, 3, 19, 0},
-	criterion{"average rating top females", ratingDifference, IsFemale, 19, 7, 0},
-	criterion{"std dev of team player ratings", ratingStdDev, nil, 0, 6, 0},
-	criterion{"std dev of team male ratings", ratingStdDev, IsMale, 0, 5, 0},
-	criterion{"std dev of team female ratings", ratingStdDev, IsFemale, 0, 5, 0},
+	criterion{"matching baggages", baggagesMatch, nil, 10000, 0},
+	criterion{"number of players", playerCountDifference, nil, 15, 0},
+	criterion{"number of males", playerCountDifference, IsMale, 12, 0},
+	criterion{"number of females", playerCountDifference, IsFemale, 12, 0},
+	criterion{"average rating players", ratingDifference, nil, 8, 0},
+	criterion{"average rating males", ratingDifference, IsMale, 7, 0},
+	criterion{"average rating females", ratingDifference, IsFemale, 7, 0},
+	criterion{"std dev of team player ratings", ratingStdDev, nil, 6, 0},
+	criterion{"std dev of team male ratings", ratingStdDev, IsMale, 5, 0},
+	criterion{"std dev of team female ratings", ratingStdDev, IsFemale, 5, 0},
 }
 
 func playerCountDifference(teams []Team) Score {
@@ -108,14 +100,7 @@ func (c criterion) analyze(teams []Team) (
 	rawScore Score, normalizedScore Score, weightedScore Score) {
 	filteredTeams := make([]Team, len(teams))
 	for i, _ := range teams {
-		players := Filter(teams[i].players, c.filter)
-		// If the max num players to run this criterion on is set and we have at
-		// least that many players, filter out all but the top ones
-		if c.numPlayers > 0 && len(players) > c.numPlayers {
-			sort.Sort(ByRating(players))
-			players = players[:c.numPlayers]
-		}
-		filteredTeams[i].players = players
+		filteredTeams[i].players = Filter(teams[i].players, c.filter)
 	}
 
 	rawScore = c.calculate(filteredTeams)
