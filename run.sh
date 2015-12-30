@@ -6,4 +6,4 @@ set -e
 # Test, build, then run with our sample data
 go test
 go build
-./roster-generator sample_players.txt sample_baggages.txt
+./roster-generator sample_players.csv sample_baggages.csv
