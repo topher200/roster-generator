@@ -27,7 +27,8 @@ func ParsePlayers(inputFilename string) []Player {
 // ParseBaggages has the side effect of setting the .baggage for all Players
 func ParseBaggages(inputFilename string, players []Player) {
 	for _, baggage := range baseutil.MapReader(inputFilename) {
-		playerPointer, err := FindPlayer(players, Name{baggage["firstname1"], baggage["lastname1"]})
+		playerPointer, err := FindPlayer(
+			players, Name{baggage["firstname1"], baggage["lastname1"]})
 		baseutil.Check(err)
 		if playerPointer.HasBaggage() {
 			newLog.Panicf("Player %v already has baggage %v",
