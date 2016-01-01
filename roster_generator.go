@@ -105,6 +105,17 @@ func PrintTeams(solution Solution) {
 		string += "|"
 		fmt.Fprintln(writer, string)
 
+		string = ""
+		for _, team := range teams {
+			topPlayers := team.players
+			if len(topPlayers) > 3 {
+				topPlayers = team.players[:3]
+			}
+			string += fmt.Sprintf("|Top Average: %.02f\t", AverageRating(Team{topPlayers}))
+		}
+		string += "|"
+		fmt.Fprintln(writer, string)
+
 		// Print the players for each team
 		numLoops := maxNumberOfPlayersPerTeam(teams)
 		for i := 0; i < numLoops; i++ {
