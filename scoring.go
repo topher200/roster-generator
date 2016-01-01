@@ -125,7 +125,7 @@ func (c criterion) analyze(teams []Team) (
 		// If the max num players to run this criterion on is set and we have at
 		// least that many players, filter out all but the top ones
 		if c.numPlayers > 0 && len(players) > c.numPlayers {
-			sort.Sort(ByRating(players))
+			sort.Sort(sort.Reverse(ByRating(players)))
 			players = players[:c.numPlayers]
 		}
 		filteredTeams[i].players = players
