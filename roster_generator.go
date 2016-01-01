@@ -26,8 +26,6 @@ var newLog = logging.MustGetLogger("")
 const (
 	// Number of teams to break players into
 	numTeams = 6
-	// Number of times to run our genetic algorithm
-	numRuns = 100
 	// Percent of the time we will try to mutate. After each
 	// mutation, we have a mutationChance percent chance of
 	// mutating again.
