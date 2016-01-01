@@ -8,7 +8,6 @@ import (
 	"text/tabwriter"
 
 	"github.com/GaryBoone/GoStats/stats"
-	"github.com/topher200/baseutil"
 )
 
 type criterionCalculationFunction func(teams []Team) Score
@@ -43,11 +42,25 @@ var criteriaToScore = [...]criterion{
 }
 
 func playerCountDifference(teams []Team) Score {
-	teamLengths := make([]int, numTeams)
-	for i, team := range teams {
-		teamLengths[i] = len(team.players)
+	// Score increases as the different in team length becomes greater than 1
+	min := len(teams[0].players)
+	max := len(teams[0].players)
+	for _, team := range teams {
+		if len(team.players) < min {
+			min = len(team.players)
+		}
+		if len(team.players) > max {
+			max = len(team.players)
+		}
 	}
-	return Score(baseutil.StandardDeviationInt(teamLengths))
+	diff := max - min
+	// Teams can have +1 person from each other (due to odd # of people). Beyond
+	// that it's unbalanced.
+	score := diff - 1
+	if score < 0 {
+		score = 0
+	}
+	return Score(score)
 }
 
 func ratingDifference(teams []Team) Score {
