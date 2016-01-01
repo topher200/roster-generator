@@ -293,6 +293,7 @@ func main() {
 			if newLog.IsEnabledFor(logging.DEBUG) {
 				newLog.Info("New top score! Run number %d. Score: %.02f",
 					numRunsCompleted, topScore)
+				PrintTeams(parentSolutions[0])
 				PrintSolutionScoring(parentSolutions[0])
 			}
 		}
@@ -304,13 +305,14 @@ func main() {
 			parentSolutions[i] = newSolutions[i]
 		}
 		numRunsCompleted += 1
-		if timeToClose(numRunsCompleted, topScoreRunNumber) {
+		if timeToClose(numRunsCompleted, topScoreRunNumber, doneSignal) {
 			break
 		}
 	}
 
 	// Display our solution to the user
 	topSolution := parentSolutions[0]
+	fmt.Println()
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
 	newLog.Debug("Program runtime: %.02fs", time.Since(startTime).Seconds())
