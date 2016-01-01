@@ -7,8 +7,10 @@ import (
 	"math"
 	"math/rand"
 	"os"
+	"os/signal"
 	"runtime"
 	"sort"
+	"syscall"
 	"text/tabwriter"
 	"time"
 
@@ -243,8 +245,16 @@ func parseCommandLine() ([]Player, bool, int) {
 	return players, *runProfilingPointer, numWorkers
 }
 
-func timeToClose(numRunsCompleted, topScoreRunNumber int) bool {
-	return numRunsCompleted > topScoreRunNumber+1000
+func timeToClose(
+	numRunsCompleted int, topScoreRunNumber int, doneSignal <-chan os.Signal) bool {
+	// If we receive a done signal, exit
+	select {
+	case <-doneSignal:
+		fmt.Println("Exit signal received")
+		return true
+	default:
+	}
+	return numRunsCompleted > topScoreRunNumber+10000
 }
 
 func main() {
@@ -281,6 +291,10 @@ func main() {
 		go worker(tasks, results)
 	}
 	defer close(tasks)
+
+	// Allow user to signal exit
+	doneSignal := make(chan os.Signal, 1)
+	signal.Notify(doneSignal, syscall.SIGINT)
 
 	topScore := parentSolutions[0].score
 	numRunsCompleted := 0
