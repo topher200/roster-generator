@@ -243,6 +243,10 @@ func parseCommandLine() ([]Player, bool, int) {
 	return players, *runProfilingPointer, numWorkers
 }
 
+func timeToClose(numRunsCompleted, topScoreRunNumber int) bool {
+	return numRunsCompleted > topScoreRunNumber+1000
+}
+
 func main() {
 	players, profilingOn, numWorkers := parseCommandLine()
 	startTime := time.Now()
@@ -279,12 +283,16 @@ func main() {
 	defer close(tasks)
 
 	topScore := parentSolutions[0].score
-	for i := 0; i < numRuns; i++ {
+	numRunsCompleted := 0
+	topScoreRunNumber := 0
+	for {
 		// If we have a new best score, save and print it!
 		if topScore != parentSolutions[0].score {
 			topScore = parentSolutions[0].score
+			topScoreRunNumber = numRunsCompleted
 			if newLog.IsEnabledFor(logging.DEBUG) {
-				newLog.Info("New top score! Run number %d. Score: %.02f", i, topScore)
+				newLog.Info("New top score! Run number %d. Score: %.02f",
+					numRunsCompleted, topScore)
 				PrintSolutionScoring(parentSolutions[0])
 			}
 		}
@@ -294,6 +302,10 @@ func main() {
 		sort.Sort(ByScore(newSolutions))
 		for i, _ := range parentSolutions {
 			parentSolutions[i] = newSolutions[i]
+		}
+		numRunsCompleted += 1
+		if timeToClose(numRunsCompleted, topScoreRunNumber) {
+			break
 		}
 	}
 
