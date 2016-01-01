@@ -23,7 +23,7 @@ var newLog = logging.MustGetLogger("")
 // Genetic algorithm constants
 const (
 	// Number of teams to break players into
-	numTeams = 4
+	numTeams = 6
 	// Number of times to run our genetic algorithm
 	numRuns = 100
 	// Percent of the time we will try to mutate. After each
