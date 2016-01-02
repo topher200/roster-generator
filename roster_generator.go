@@ -179,21 +179,15 @@ func worker(tasks <-chan workerTask, results chan<- Solution) {
 // performRun creates a new solution list by breeding parents.
 func performRun(
 	parents []Solution, tasks chan<- workerTask, results <-chan Solution) []Solution {
-	solutions := make([]Solution, numSolutionsPerRun)
-
-	// Keep the parents from last time - elitism!
-	for i := 0; i < numParents; i++ {
-		solutions[i] = parents[i]
-	}
-
 	// Start jobs
-	for i := numParents; i < numSolutionsPerRun; i++ {
+	for i := 0; i < numSolutionsPerRun; i++ {
 		tasks <- workerTask{
 			parents[rand.Intn(len(parents))], parents[rand.Intn(len(parents))]}
 	}
 
 	// Retreive the results of our jobs
-	for i := numParents; i < numSolutionsPerRun; i++ {
+	solutions := make([]Solution, numSolutionsPerRun)
+	for i := 0; i < numSolutionsPerRun; i++ {
 		solutions[i] = <-results
 	}
 	return solutions
