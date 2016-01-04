@@ -176,13 +176,32 @@ func worker(tasks <-chan workerTask, results chan<- Solution) {
 	}
 }
 
+func tournamentSelection(parents []Solution) Solution {
+	// Randomly select parents for tournament
+	numParentsInTournament := 5
+	tournamentParents := make([]Solution, numParentsInTournament)
+	for i := range tournamentParents {
+		// Random parent
+		tournamentParents[i] = parents[rand.Intn(len(parents))]
+	}
+
+	// Choose our two parents for breeding from tournament in weighted fashion
+	const p = .5
+	r := rand.Float64()
+	for i := range tournamentParents {
+		if p*math.Pow((1.0-p), float64(i+1)) < r {
+			return tournamentParents[i]
+		}
+	}
+	return parents[0]
+}
+
 // performRun creates a new solution list by breeding parents.
 func performRun(
 	parents []Solution, tasks chan<- workerTask, results <-chan Solution) []Solution {
 	// Start jobs
 	for i := 0; i < numSolutionsPerRun; i++ {
-		tasks <- workerTask{
-			parents[rand.Intn(len(parents))], parents[rand.Intn(len(parents))]}
+		tasks <- workerTask{tournamentSelection(parents), tournamentSelection(parents)}
 	}
 
 	// Retreive the results of our jobs
