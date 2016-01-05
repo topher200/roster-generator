@@ -150,13 +150,28 @@ func mutate(players []Player) {
 func breed(solution1 Solution, solution2 Solution) Solution {
 	// Create the new solution by taking crossover from both inputs
 	newPlayers := make([]Player, len(solution1.players))
-	for i, _ := range newPlayers {
-		// Randomly take each player from solution1 or solution2
-		if rand.Intn(100) < 50 {
-			newPlayers[i] = solution1.players[i]
-		} else {
-			newPlayers[i] = solution2.players[i]
-		}
+
+	// Split the genomes in two random places. Take players until splitIndex1 from
+	// solution1, then players until splitIndex2 from solution2, then fill out
+	// from solution1.
+	numPlayers := len(solution1.players)
+	if numPlayers <= 2 {
+		fmt.Printf("Error: not enough players (%v) to breed\n", numPlayers)
+		return solution1
+	}
+	splitIndex1 := rand.Intn(numPlayers - 2)
+	splitIndex2 := numPlayers
+	if splitIndex1 > 1 {
+		splitIndex2 = splitIndex1 + rand.Intn(numPlayers-splitIndex1-1)
+	}
+	for i := 0; i < splitIndex1; i++ {
+		newPlayers[i] = solution1.players[i]
+	}
+	for i := splitIndex1; i < splitIndex2; i++ {
+		newPlayers[i] = solution2.players[i]
+	}
+	for i := splitIndex2; i < numPlayers; i++ {
+		newPlayers[i] = solution1.players[i]
 	}
 
 	// Mutate the new player list
