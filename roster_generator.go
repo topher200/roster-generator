@@ -29,7 +29,7 @@ const (
 	// Percent of the time we will try to mutate. After each
 	// mutation, we have a mutationChance percent chance of
 	// mutating again.
-	mutationChance = 5
+	mutationChance = 25
 	// We will make numSolutionsPerRun every run, and numParents carry
 	// over into the next run to create the next batch of solutions.
 	numSolutionsPerRun = 1000
