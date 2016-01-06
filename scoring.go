@@ -28,8 +28,8 @@ type criterion struct {
 var criteriaToScore = [...]criterion{
 	criterion{"matching baggages", baggagesMatch, nil, 0, 10000, 0},
 	criterion{"number of players", playerCountDifference, nil, 0, 15, 0},
-	criterion{"number of males", playerCountDifference, IsMale, 0, 12, 0},
-	criterion{"number of females", playerCountDifference, IsFemale, 0, 12, 0},
+	criterion{"number of males", playerCountDifference, IsMale, 0, 120, 0},
+	criterion{"number of females", playerCountDifference, IsFemale, 0, 120, 0},
 	criterion{"average rating players", ratingDifference, nil, 0, 8, 0},
 	criterion{"average rating males", ratingDifference, IsMale, 0, 7, 0},
 	criterion{"average rating females", ratingDifference, IsFemale, 0, 7, 0},
