@@ -10,7 +10,12 @@ import (
 	"github.com/GaryBoone/GoStats/stats"
 )
 
-type criterionCalculationFunction func(teams []Team) Score
+// a criterionCalculationFunction returns two values: a Score, and the raw score
+// for each team. If the singular Score is calulated as the standard deviation
+// of the values for each of the teams in that crierion, the "raw score" list
+// shows the individual values for each team. If the raw score for each team for
+// that criterion doesn't make much sense, it's an empty slice.
+type criterionCalculationFunction func(teams []Team) (Score, []float64)
 type criterion struct {
 	name      string                       // human readable name
 	calculate criterionCalculationFunction // how to calculate the raw score
@@ -43,7 +48,7 @@ var criteriaToScore = [...]criterion{
 	criterion{"average rating top females", ratingDifference, IsFemale, 2, 7, 0},
 }
 
-func playerCountDifference(teams []Team) Score {
+func playerCountDifference(teams []Team) (Score, []float64) {
 	// Score increases as the different in team length becomes greater than 1
 	min := len(teams[0].players)
 	max := len(teams[0].players)
@@ -62,18 +67,18 @@ func playerCountDifference(teams []Team) Score {
 	if score < 0 {
 		score = 0
 	}
-	return Score(score)
+	return Score(score), []float64{}
 }
 
-func ratingDifference(teams []Team) Score {
+func ratingDifference(teams []Team) (Score, []float64) {
 	teamAverageRatings := make([]float64, numTeams)
 	for i, team := range teams {
 		teamAverageRatings[i] = float64(AverageRating(team))
 	}
-	return Score(stats.StatsSampleStandardDeviation(teamAverageRatings))
+	return Score(stats.StatsSampleStandardDeviation(teamAverageRatings)), teamAverageRatings
 }
 
-func ratingStdDev(teams []Team) Score {
+func ratingStdDev(teams []Team) (Score, []float64) {
 	teamRatingsStdDev := make([]float64, numTeams)
 	for i, team := range teams {
 		if len(team.players) < 2 {
@@ -86,10 +91,10 @@ func ratingStdDev(teams []Team) Score {
 		}
 		teamRatingsStdDev[i] = stats.StatsSampleStandardDeviation(playerRatings)
 	}
-	return Score(stats.StatsSampleStandardDeviation(teamRatingsStdDev))
+	return Score(stats.StatsSampleStandardDeviation(teamRatingsStdDev)), teamRatingsStdDev
 }
 
-func baggagesMatch(teams []Team) Score {
+func baggagesMatch(teams []Team) (Score, []float64) {
 	score := Score(0)
 	for _, team := range teams {
 		for _, player := range team.players {
@@ -102,7 +107,7 @@ func baggagesMatch(teams []Team) Score {
 			}
 		}
 	}
-	return score
+	return score, []float64{}
 }
 
 func AverageRating(team Team) Score {
@@ -119,7 +124,7 @@ func AverageRating(team Team) Score {
 // analyze criterion by filtering the input teams and running the criterion's
 // function
 func (c criterion) analyze(teams []Team) (
-	rawScore Score, normalizedScore Score, weightedScore Score) {
+	rawScore Score, normalizedScore Score, weightedScore Score, rawValues []float64) {
 	filteredTeams := make([]Team, len(teams))
 	for i, _ := range teams {
 		players := Filter(teams[i].players, c.filter)
@@ -132,14 +137,14 @@ func (c criterion) analyze(teams []Team) (
 		filteredTeams[i].players = players
 	}
 
-	rawScore = c.calculate(filteredTeams)
+	rawScore, rawValues = c.calculate(filteredTeams)
 	if c.worstCase != 0 {
 		normalizedScore = rawScore / c.worstCase
 	} else {
 		normalizedScore = rawScore
 	}
 	weightedScore = normalizedScore * Score(c.weight)
-	return rawScore, normalizedScore, weightedScore
+	return rawScore, normalizedScore, weightedScore, rawValues
 }
 
 func maxScore(a, b Score) Score {
@@ -175,7 +180,7 @@ func ScoreSolution(players []Player) (totalScore Score, rawScores []Score) {
 	teams := splitIntoTeams(players)
 	rawScores = make([]Score, len(criteriaToScore))
 	for i, criterion := range criteriaToScore {
-		rawScore, _, weightedScore := criterion.analyze(teams)
+		rawScore, _, weightedScore, _ := criterion.analyze(teams)
 		rawScores[i] = rawScore
 		totalScore += weightedScore
 	}
@@ -188,14 +193,15 @@ func PrintSolutionScoring(solution Solution) {
 	writer := new(tabwriter.Writer)
 	writer.Init(os.Stdout, 0, 0, 1, ' ', 0)
 	for _, criterion := range criteriaToScore {
-		rawScore, normalizedScore, weightedScore := criterion.analyze(teams)
+		rawScore, normalizedScore, weightedScore, rawValues := criterion.analyze(teams)
 		totalScore += weightedScore
 		fmt.Fprintf(
 			writer,
-			"Balancing %s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\t(raw score %0.2f, worst case %.02f)\tRunning total: %.02f\n",
+			"%s.\tScore: %.02f\t(= normalized score %.02f * weight %d)\t(raw score %0.2f, worst case %.02f)\tRaw Values: %.02f\n",
 			criterion.name, weightedScore, normalizedScore, criterion.weight,
-			rawScore, criterion.worstCase, totalScore)
+			rawScore, criterion.worstCase, rawValues)
 	}
+	fmt.Println("Total score: ", totalScore)
 	writer.Flush()
 
 	// Print the missing baggages
