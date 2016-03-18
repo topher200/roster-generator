@@ -16,6 +16,7 @@ import (
 
 	"github.com/op/go-logging"
 	"github.com/pkg/profile"
+	"github.com/topher200/baseutil"
 
 	"gopkg.in/alecthomas/kingpin.v2"
 )
@@ -30,6 +31,9 @@ const (
 	// mutation, we have a mutationChance percent chance of
 	// mutating again.
 	mutationChance = 25
+	// Percent of the time that when a player mutates, all their baggage gets
+	// carried with them.
+	mutationCarriesBaggageChance = 80
 	// We will make numSolutionsPerRun every run, and numParents carry
 	// over into the next run to create the next batch of solutions.
 	numSolutionsPerRun = 1000
@@ -142,7 +146,17 @@ func mutate(players []Player) {
 			return
 		}
 		// Mutation! Move a random player to a random new team
-		players[rand.Intn(len(players))].team = uint8(rand.Intn(numTeams))
+		playerToMove := players[rand.Intn(len(players))]
+		newTeam := uint8(rand.Intn(numTeams))
+		playerToMove.team = newTeam
+
+		if rand.Intn(100) > mutationCarriesBaggageChance {
+			for _, baggage := range playerToMove.baggages {
+				baggagePlayer, err := FindPlayer(players, baggage)
+				baseutil.Check(err)
+				baggagePlayer.team = newTeam
+			}
+		}
 	}
 }
 
