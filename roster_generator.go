@@ -358,6 +358,7 @@ func main() {
 		for i, _ := range parentSolutions {
 			parentSolutions[i] = newSolutions[i]
 		}
+
 		numRunsCompleted += 1
 		if timeToClose(numRunsCompleted, topScoreRunNumber, doneSignal) {
 			break
@@ -366,7 +367,8 @@ func main() {
 
 	// Display our solution to the user
 	topSolution := parentSolutions[0]
-	fmt.Println()
+	fmt.Printf("Exiting after %d runs. Top score was found on run #%d\n",
+		numRunsCompleted, topScoreRunNumber)
 	PrintTeams(topSolution)
 	PrintSolutionScoring(topSolution)
 	newLog.Debug("Program runtime: %.02fs", time.Since(startTime).Seconds())
