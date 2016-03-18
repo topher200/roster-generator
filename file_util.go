@@ -19,7 +19,7 @@ func ParsePlayers(inputFilename string) []Player {
 		rating, err := strconv.ParseFloat(row["Balanced Rating"], 32)
 		baseutil.Check(err)
 		players[i] = Player{
-			Name{firstName, lastName}, float32(rating), gender, uint8(0), Name{}}
+			Name{firstName, lastName}, float32(rating), gender, uint8(0), []Name{}}
 	}
 	return players
 }
@@ -30,12 +30,9 @@ func ParseBaggages(inputFilename string, players []Player) {
 		playerPointer, err := FindPlayer(
 			players, Name{baggage["firstname1"], baggage["lastname1"]})
 		baseutil.Check(err)
-		if playerPointer.HasBaggage() {
-			newLog.Panicf("Player %v already has baggage %v",
-				*playerPointer, playerPointer.baggage)
-		}
-		playerPointer.baggage = Name{baggage["firstname2"], baggage["lastname2"]}
+		playerPointer.baggages = append(
+			playerPointer.baggages, Name{baggage["firstname2"], baggage["lastname2"]})
 		newLog.Debug("Found baggage of %v for %v",
-			playerPointer.baggage, playerPointer.String())
+			playerPointer.baggages[len(playerPointer.baggages)-1], playerPointer.String())
 	}
 }

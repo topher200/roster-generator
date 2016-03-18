@@ -89,13 +89,12 @@ func baggagesMatch(teams []Team) Score {
 	score := Score(0)
 	for _, team := range teams {
 		for _, player := range team.players {
-			if !player.HasBaggage() {
-				continue
-			}
-			_, err := FindPlayer(team.players, player.baggage)
-			if err != nil {
-				// Player desired a baggage, but they're not on the team
-				score += 1
+			for _, baggage := range player.baggages {
+				_, err := FindPlayer(team.players, baggage)
+				if err != nil {
+					// Player desired a baggage, but they're not on the team
+					score += 1
+				}
 			}
 		}
 	}
@@ -198,13 +197,12 @@ func PrintSolutionScoring(solution Solution) {
 	// Print the missing baggages
 	for _, team := range teams {
 		for _, player := range team.players {
-			if !player.HasBaggage() {
-				continue
-			}
-			_, err := FindPlayer(team.players, player.baggage)
-			if err != nil {
-				// Player desired a baggage, but they're not on the team
-				fmt.Printf("%v and %v were unfulfilled baggage\n", player, player.baggage)
+			for _, baggage := range player.baggages {
+				_, err := FindPlayer(team.players, baggage)
+				if err != nil {
+					// Player desired a baggage, but they're not on the team
+					fmt.Printf("%v and %v were unfulfilled baggage\n", player, baggage)
+				}
 			}
 		}
 	}
