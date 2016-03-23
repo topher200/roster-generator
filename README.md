@@ -26,14 +26,16 @@ Teams are balanced in the following dimensions:
  - number of baggages satisfied
  - number of players per team
  - number of men/women per team
+
  - average team rating
- - average male/female rating
  - the standard deviation of each team's ratings (so each team has a balanced "spread")
+
+ - average male/female rating
  - the standard deviation of each team's male/female ratings
  - the standard deviation of each team's top male/female players' ratings
 
 We "balance" a team against the rest in a given category by scoring each team
-and trying to minimize the standard deviation (the "distanance apart") of all
+and trying to minimize the standard deviation (the "distance apart") of all
 those scores. Each dimension is weighted, so some count more or less.
 
 For the implemenation and actual weights used, check out `scoring.go`.

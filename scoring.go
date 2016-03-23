@@ -32,6 +32,7 @@ type criterion struct {
 
 var criteriaToScore = [...]criterion{
 	criterion{"matching baggages", baggagesMatch, nil, 0, 10000, 0},
+	criterion{"number of players", playerCountDifference, nil, 0, 8, 0},
 	criterion{"number of males", playerCountDifference, IsMale, 0, 1200, 0},
 	criterion{"number of females", playerCountDifference, IsFemale, 0, 1200, 0},
 
@@ -46,6 +47,7 @@ var criteriaToScore = [...]criterion{
 	criterion{"average rating females", ratingDifference, IsFemale, 0, 7, 0},
 	criterion{"std dev of team female ratings", ratingStdDev, IsFemale, 0, 5, 0},
 	criterion{"average rating top females", ratingDifference, IsFemale, 2, 7, 0},
+	criterion{"std dev of top female ratings", ratingStdDev, IsFemale, 2, 5, 0},
 }
 
 func playerCountDifference(teams []Team) (Score, []float64) {
