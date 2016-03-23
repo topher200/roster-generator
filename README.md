@@ -30,6 +30,7 @@ Teams are balanced in the following dimensions:
  - average male/female rating
  - the standard deviation of each team's ratings (so each team has a balanced "spread")
  - the standard deviation of each team's male/female ratings
+ - the standard deviation of each team's top male/female players' ratings
 
 We "balance" a team against the rest in a given category by scoring each team
 and trying to minimize the standard deviation (the "distanance apart") of all
