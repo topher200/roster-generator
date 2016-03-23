@@ -150,12 +150,15 @@ func mutate(players []Player) {
 		newTeam := uint8(rand.Intn(numTeams))
 		playerToMove.team = newTeam
 
+		// We have mutationCarriesBaggageChance of the player carrying their baggage
+		// to the new team. Otherwise, we break out of our loop.
 		if rand.Intn(100) > mutationCarriesBaggageChance {
-			for _, baggage := range playerToMove.baggages {
-				baggagePlayer, err := FindPlayer(players, baggage)
-				baseutil.Check(err)
-				baggagePlayer.team = newTeam
-			}
+			return
+		}
+		for _, baggage := range playerToMove.baggages {
+			baggagePlayer, err := FindPlayer(players, baggage)
+			baseutil.Check(err)
+			baggagePlayer.team = newTeam
 		}
 	}
 }
