@@ -331,7 +331,7 @@ func main() {
 			topScore = parentSolutions[0].score
 			topScoreRunNumber = numRunsCompleted
 			if newLog.IsEnabledFor(logging.DEBUG) && numRunsCompleted > 20 {
-				newLog.Info("New top score! Run number %d. Score: %.02f",
+				newLog.Info("\nNew top score! Run number %d. Score: %.02f",
 					numRunsCompleted, topScore)
 				PrintTeams(parentSolutions[0])
 				PrintSolutionScoring(parentSolutions[0])
