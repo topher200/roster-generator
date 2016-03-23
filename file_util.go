@@ -27,12 +27,14 @@ func ParsePlayers(inputFilename string) []Player {
 // ParseBaggages has the side effect of setting the .baggage for all Players
 func ParseBaggages(inputFilename string, players []Player) {
 	for _, baggage := range baseutil.MapReader(inputFilename) {
-		playerPointer, err := FindPlayer(
+		playerPointer1, err := FindPlayer(
 			players, Name{baggage["firstname1"], baggage["lastname1"]})
 		baseutil.Check(err)
-		playerPointer.baggages = append(
-			playerPointer.baggages, Name{baggage["firstname2"], baggage["lastname2"]})
-		newLog.Debug("Found baggage of %v for %v",
-			playerPointer.baggages[len(playerPointer.baggages)-1], playerPointer.String())
+		playerPointer2, err := FindPlayer(
+			players, Name{baggage["firstname2"], baggage["lastname2"]})
+		baseutil.Check(err)
+		playerPointer1.baggages = append(playerPointer1.baggages, playerPointer2.name)
+		playerPointer2.baggages = append(playerPointer2.baggages, playerPointer1.name)
+		newLog.Debug("Found baggage of %v and %v", playerPointer1.String(), playerPointer2.String())
 	}
 }
